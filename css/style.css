@@ -1,0 +1,45 @@
+html, body {
+    background: #ffffcc;
+    font-size: 86%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body, p {
+    color: #000000;
+    font-style: "vera sans","dejavu sans",helvetica,verdana,arial,sans-serif;
+}
+
+.menu {
+    background: #ffcc33;
+    display: inline-block;
+    font-size: 120%; /* pending proper vertical-align: center */
+    font-weight: bold;
+    height: 10%;
+}
+
+#menutop {
+    text-align: center;
+    width: 30%;
+}
+
+#menuevent {
+    text-align: center;
+    width: 30%;
+}
+
+#menuperso {
+    text-align: center;
+    width: 30%;
+}
+
+#content {
+    min-height: 90%;
+}
+
+#footer {
+    font-size: 55%;
+    height: 15px;
+    text-align: center;
+}
