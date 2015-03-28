@@ -4,26 +4,49 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
 	<link rel="stylesheet" href="./css/style.css" type="text/css" />
+	<link rel="stylesheet" href="./css/bootstrap.min.css" type="text/css" />
+	<link rel="stylesheet" href="./css/dropdown.css" type="text/css" />
 	<link rel="icon" type="image/vnd.microsoft.icon" href="./favicon.ico" />
 	<link rel="SHORTCUT ICON" href="./favicon.ico" />
+	<script language="javascript" src="./js/underscore-min.js"></script>
+	<script language="javascript" src="./js/jquery.min.js"></script>
 	<script language="javascript" src="./js/backbone-min.js"></script>
-	<script language="javascript" src="./js/client.js"></script>
 	<script language="javascript" src="./js/dropdown.js"></script>
+	<script language="javascript" src="./js/main.js"></script>
 	<title>myArtGallery</title>
     </head>
     <body>
-	<div align='center' id=header>
-	    <div id='menutop' class='menu'
-		onMouseOver='showTop();'
-		onMouseOut='hideTop();'>Top</div>
-	    <div id='menuevent' class='menu'
-		onMouseOver='showEvent();'
-		onMouseOut='hideEvent();'>Events</div>
-	    <div id='menuperso' class='menu'
-		onMouseOver='showPerso();'
-		onMouseOut='hidePerso();'>myArtGallery</div>
+	<div align='center' id='header'>
+	    <ul class='dropdown' id='menuheader'>
+		<li id='menutop'>
+		    Top
+		    <ul id='menudropdown'>
+			<li><a href='#'>Top Artists</a></li>
+			<li><a href='#'>Top Artworks</a></li>
+		    </ul>
+		</li>
+		<li id='menuevent'>
+		    Events
+		    <ul id='menudropdown'>
+			<li><a href='#'>Auctions</a></li>
+			<li><a href='#'>Expositions</a></li>
+		    </ul>
+		</li>
+		<li id='menuperso'>
+		    myArtGallery
+		    <ul id='menudropdown'>
+			<li><a href='#'>Wallet</a></li>
+			<li><a href='#'>Evaluate Artwork</a></li>
+			<li><a href='#'>Social Network</a></li>
+			<li><a href='#'>Shares</a></li>
+		    </ul>
+		</li>
+	    </ul>
 	</div>
-	<div align='center' id=content></div>
-	<div align='center' id=footer>Copyleft 2015 by bibi</div>
+	<div align='center' id='content' class='container'>
+	    <div class='page'></div>
+	</div>
+	<div align='center' id='footer'>Copyleft 2015 by bibi</div>
+	<script language="javascript" src="./js/client.js"></script>
     </body>
 </html>

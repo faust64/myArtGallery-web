@@ -1,36 +1,133 @@
-/* * menu * */
-function showTop() {
-    var elt = document.getElementById('menutop');
-    elt.innerHTML = "<div id='menuitem'>Top Artist</div>"
-		  + "<div id='menuitem'>Top Artwork</div>";
+/* * backbone * */
+CORE_URL = 'http://localhost:8080';
+
+if (CORE_URL != false) {
+    $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+	    options.url = CORE_URL + options.url + '/';
+	});
 }
 
-function hideTop() {
-    var elt = document.getElementById('menutop');
-    elt.innerHTML = "Top";
-}
+$.fn.serializeObject = function() {
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function() {
+	if (o[this.name] !== undefined) {
+	    if (!o[this.name].push) {
+		o[this.name] = [o[this.name]];
+	    }
+	    o[this.name].push(this.value || '');
+	} else {
+	    o[this.name] = this.value || '';
+	}
+    });
 
-function showEvent() {
-    var elt = document.getElementById('menuevent');
-    elt.innerHTML = "<div id='menuitem'>Expositions</div>"
-		  + "<div id='menuitem'>Auctions</div>";
-}
+    return o;
+};
 
-function hideEvent() {
-    var elt = document.getElementById('menuevent');
-    elt.innerHTML = "Events";
-}
+var Artists = Backbone.Collection.extend({
+	url: '/artists/'
+    });
 
-function showPerso() {
-    var elt = document.getElementById('menuperso');
-    elt.innerHTML = "<div id='menuitem'>Wallet</div>"
-		  + "<div id='menuitem'>Evaluate Artwork</div>"
-		  + "<div id='menuitem'>Social Network</div>"
-		  + "<div id='menuitem'>Shares</div>";
-}
+var Artist = Backbone.Model.extend({
+	urlRoot: '/artists/'
+    });
 
-function hidePerso() {
-    var elt = document.getElementById('menuperso');
-    elt.innerHTML = "myArtGallery";
-}
-/* * menu * */
+var ArtistList = Backbone.View.extend({
+	el: '.page',
+	render: function () {
+	    var that = this;
+	    var artists = new Artists();
+	    artists.fetch({
+		success: function (artists) {
+			content = "<h1>Artists List<h1/><p>";
+			for (var idx = 0; idx < artists.models.length
+			    && idx < 20; idx++) {
+			    dname = artists.models[idx]['attributes']['dname'];
+			    content += "<a href='#/artists/" + dname + "/'>"
+				    + dname + "</a><br/>";
+			}
+			content += "</p>";
+			that.$el.html(content);
+		    }
+		});
+	    }
+    });
+
+var ArtistView = Backbone.View.extend({
+	el: '.page',
+	render: function (id) {
+	    var that = this;
+	    that.artists = new Artist({id: id.dname});
+	    that.artists.fetch({
+		success: function (artist) {
+			attrs   = artist['attributes']['0'];
+		        content = "<h1>" + attrs['firstname'] + " <b>"
+				+ attrs['lastname'] + "</b>";
+			if (attrs['dstart']) {
+			    content += " (" + attrs['dstart'] + " - "
+				    + attrs['dstop'] + ")";
+			}
+			content += "</h1></br>";
+			if (attrs['bestcountry']) {
+			    content += "Mostly sold in "
+				    + attrs['bestcountry'];
+			    if (attrs['bestamount']) {
+				content += " (ratio: "
+					+ attrs['bestamount'] + ")";
+			    }
+			    content += "</br>";
+			}
+			if (attrs['priceidx']) {
+			    content += "Mostly sold " + attrs['priceidx']
+				    + "<br/>";
+			}
+			if (attrs['rank']) {
+			    content += "Rank: " + attrs['rank'] + "<br/>";
+			}
+			that.$el.html(content);
+		    }
+		});
+	    }
+    });
+
+var Router = Backbone.Router.extend({
+	routes: {
+	  '': 'home',
+	  'artists/:dname/': 'artistshow',
+	  'search/artists/:lookup/': 'artistlookup',
+	  'count/artists': 'artistscount',
+	  'artworks/*': 'artworkshow',
+	  'search/artworks/*': 'artworklookup',
+	  'count/artworks': 'artworkcount'
+	}
+    });
+var router = new Router();
+var artistList = new ArtistList();
+var artistView = new ArtistView();
+
+router.on('route:home', function() {
+	artistList.render();
+	console.log('route home');
+    });
+router.on('route:artistshow', function(dname) {
+	artistView.render({dname: dname});
+	console.log('route show artist');
+    });
+router.on('route:artistlookup', function(lookup) {
+	console.log('route search artist');
+    });
+router.on('route:artistcount', function() {
+	console.log('route count artists');
+    });
+router.on('route:artworkshow', function() {
+	console.log('route show artwork');
+    });
+router.on('route:artworklookup', function() {
+	console.log('route search artwork');
+    });
+router.on('route:artworkcount', function() {
+	console.log('route count artworks');
+    });
+
+Backbone.history.start();
+/* * backbone * */

@@ -11,6 +11,10 @@ body, p {
     font-style: "vera sans","dejavu sans",helvetica,verdana,arial,sans-serif;
 }
 
+h1 {
+    font-size: 110%;
+}
+
 .menu {
     background: #ffcc33;
     display: inline-block;
@@ -22,6 +26,10 @@ body, p {
 #menutop {
     text-align: center;
     width: 30%;
+}
+
+#menudropdown {
+    width: 100%;
 }
 
 #menuevent {
@@ -42,4 +50,23 @@ body, p {
     font-size: 55%;
     height: 15px;
     text-align: center;
+}
+
+.dropdown,
+.dropdown ul {
+    background: rgb(128,192,64);
+}
+
+.dropdown a,
+.dropdown span {
+    padding: 0.25em 0.5em;
+    color: white;
+    transition: background 0.2s;
+}
+
+.dropdown li:hover > a,
+.dropdown li:hover > span,
+.dropdown li.dropdownOpen > a,
+.dropdown li.dropdownOpen > span {
+    background: rgb(160,208,112);
 }
