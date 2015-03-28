@@ -91,27 +91,30 @@ input[type=text] {
 
 #srch {
     display: inline-block;
+    height: 35px;
     width: 100%;
 }
 
 #leftsrch {
-    float: left;
-    vertical-align: center;
     display: inline-block;
+    float: left;
+    height: 100%;
+    position: relative;
     width: 10%;
 }
 
 #midsrch {
     float: center;
-    vertical-align: top;
+    height: 100%;
     display: inline-block;
     width: 80%;
 }
 
 #rightsrch {
-    float: right;
-    vertical-align: center;
     display: inline-block;
+    float: right;
+    height: 100%;
+    position: relative;
     width: 10%;
 }
 
@@ -121,8 +124,18 @@ input[type=text] {
     text-align: center;
 }
 
-#hiddenimage {
+#hiddensrch {
     visibility: hidden;
+}
+
+#showsrch {
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    top: 0;
+    vertical-align: middle;
 }
 
 .dropdown,

@@ -174,8 +174,8 @@ var ArtistList = Backbone.View.extend({
 				prev = Math.floor(id.page) - 1;
 				content += "<a href=\"#search/artists/"
 					+ id.dname + "/+" + prev + "\">";
-				imgid = "";
-			    } else { imgid = " id='hiddenimage'"; }
+				imgid = " id='showsrch'";
+			    } else { imgid = " id='hiddensrch'"; }
 			    content += "<img src='./img/prev.png'" + imgid
 					+ " alt='previous' />";
 			    if (id.page && id.page > 0) { content += "</a>"; }
@@ -185,8 +185,8 @@ var ArtistList = Backbone.View.extend({
 				next = id.page ? Math.floor(id.page) + 1 : 1;
 				content += "<a href=\"#search/artists/"
 					+ id.dname + "/+" + next + "\">";
-				imgid = "";
-			    } else { imgid = " id='hiddenimage'"; }
+				imgid = " id='showsrch'";
+			    } else { imgid = " id='hiddensrch'"; }
 			    content += "<img src='./img/next.png'" + imgid
 					+ " alt='next'/>";
 			    if (artist['attributes'][RESULTS_PER_PAGE]) {
@@ -216,8 +216,8 @@ var ArtistList = Backbone.View.extend({
 				prev = Math.floor(id.page) - 1;
 				content += "<a href=\"#top/artists/+" + prev
 					+ "\">";
-				imgid = "";
-			    } else { imgid = " id='hiddenimage'"; }
+				imgid = " id='showsrch'";
+			    } else { imgid = " id='hiddensrch'"; }
 			    content += "<img src='./img/prev.png'" + imgid
 					+ " alt='previous'/>";
 			    if (id.page && id.page > 0) { content += "</a>"; }
@@ -227,8 +227,8 @@ var ArtistList = Backbone.View.extend({
 				next = id.page ? Math.floor(id.page) + 1 : 1;
 				content += "<a href=\"#top/artists/+" + next
 					+ "\">";
-				imgid = "";
-			    } else { imgid = " id='hiddenimage'"; }
+				imgid = " id='showsrch'";
+			    } else { imgid = " id='hiddensrch'"; }
 			    content += "<img src='./img/next.png'" + imgid
 					+ " alt='next'/>"
 			    if (artist['attributes'][RESULTS_PER_PAGE]) {
@@ -290,8 +290,8 @@ var ArtworkList = Backbone.View.extend({
 				prev = Math.floor(id.page) - 1;
 				content += "<a href=\"#search/artworks/"
 					+ id.dname + "/+" + prev + "\">";
-				imgid = "";
-			    } else { imgid = " id='hiddenimage'"; }
+				imgid = " id='showsrch'";
+			    } else { imgid = " id='hiddensrch'"; }
 			    content += "<img src='./img/prev.png' " + imgid
 				    + " alt='previous' />";
 			    if (id.page && id.page > 0) { content += "</a>"; }
@@ -301,8 +301,8 @@ var ArtworkList = Backbone.View.extend({
 				next = id.page ? Math.floor(id.page) + 1 : 1;
 				content += "<a href=\"#search/artworks/"
 					+ id.dname + "/+" + next + "\">";
-				imgid = "";
-			    } else { imgid = " id='hiddenimage'"; }
+				imgid = " id='showsrch'";
+			    } else { imgid = " id='hiddensrch'"; }
 			    content += "<img src='./img/next.png'" + imgid
 				    + " alt='next'/>";
 			    if (artwork['attributes'][RESULTS_PER_PAGE]) {
@@ -332,8 +332,8 @@ var ArtworkList = Backbone.View.extend({
 				prev = Math.floor(id.page) - 1;
 				content += "<a href=\"#top/artworks/+" + prev
 					+ "\">";
-				imgid = "";
-			    } else { imgid = " id='hiddenimage'"; }
+				imgid = " id='showsrch'";
+			    } else { imgid = " id='hiddensrch'"; }
 			    content += "<img src='./img/prev.png'" + imgid
 					+ "alt='previous'/>";
 			    if (id.page && id.page > 0) { content += "</a>"; }
@@ -343,8 +343,8 @@ var ArtworkList = Backbone.View.extend({
 				next = id.page ? Math.floor(id.page) + 1 : 1;
 				content += "<a href=\"#top/artworks/+" + next
 					+ "\">";
-				imgid = "";
-			    } else { imgid = " id='hiddenimage'"; }
+				imgid = " id='showsrch'";
+			    } else { imgid = " id='hiddensrch'"; }
 			    content += "<img src='./img/next.png'" + imgid
 				    + "alt='next'/>";
 			    if (artwork['attributes'][RESULTS_PER_PAGE]) {
@@ -452,14 +452,18 @@ var ArtworkView = Backbone.View.extend({
 
 var Router = Backbone.Router.extend({
 	routes: {
-	  '': 'home',
+	  '': 'artistlookup',
+
 	  'artists/:dname/': 'artistshow',
+	  'search/artists//': 'artistlookup',
 	  'search/artists/:lookup/': 'artistlookup',
 	  'search/artists/:lookup/+:increment': 'artistlookup',
 	  'top/artists/': 'artisttop',
 	  'top/artists/+:increment': 'artisttop',
 	  'count/artists/': 'artistscount',
+
 	  'artworks/:dname/': 'artworkshow',
+	  'search/artworks//': 'artworklookup',
 	  'search/artworks/:lookup/': 'artworklookup',
 	  'search/artworks/:lookup/+:increment': 'artworklookup',
 	  'top/artworks/': 'artworktop',
@@ -476,18 +480,16 @@ var artworkView = new ArtworkView();
 var searchArtistView = new SearchArtistView();
 var searchArtworkView = new SearchArtworkView();
 
-router.on('route:home', function() {
-	artistLookup.render();
-    });
-
 router.on('route:artistshow', function(dname) {
 	artistView.render({ dname: dname });
     });
 router.on('route:artistlookup', function(lookup, increment) {
-	if (increment) {
+	if (increment && lookup) {
 	    artistLookup.render({ dname: lookup, page: increment });
-	} else {
+	} else if (lookup) {
 	    artistLookup.render({ dname: lookup });
+	} else {
+	    artistLookup.render();
 	}
     });
 router.on('route:artisttop', function(increment) {
@@ -505,10 +507,12 @@ router.on('route:artworkshow', function(dname) {
 	artworkView.render({ dname: dname });
     });
 router.on('route:artworklookup', function(lookup, increment) {
-	if (increment) {
+	if (increment && lookup) {
 	    artworkLookup.render({ dname: lookup, page: increment });
-	} else {
+	} else if (lookup) {
 	    artworkLookup.render({ dname: lookup });
+	} else {
+	    artworkLookup.render();
 	}
     });
 router.on('route:artworktop', function(increment) {
