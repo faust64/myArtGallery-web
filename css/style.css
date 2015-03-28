@@ -89,6 +89,32 @@ input[type=text] {
     min-height: 90%;
 }
 
+#srch {
+    display: inline-block;
+    width: 100%;
+}
+
+#leftsrch {
+    float: left;
+    vertical-align: center;
+    display: inline-block;
+    width: 10%;
+}
+
+#midsrch {
+    float: center;
+    vertical-align: center;
+    display: inline-block;
+    width: 80%;
+}
+
+#rightsrch {
+    float: right;
+    vertical-align: center;
+    display: inline-block;
+    width: 10%;
+}
+
 #footer {
     font-size: 55%;
     height: 15px;
