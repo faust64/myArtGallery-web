@@ -15,6 +15,29 @@ h1 {
     font-size: 110%;
 }
 
+input[type=text] {
+    height: 15px;
+    line-height: 15px;
+    font-size: 13px;
+    width: 50%;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.search {
+    text-align: left;
+    font-size: 80%;
+}
+
+.btn-search {
+    background-image: url(../img/search.gif);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    background-size: cover;
+    border: none;
+}
+
 .menu {
     background: #ffcc33;
     display: inline-block;

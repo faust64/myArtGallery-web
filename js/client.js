@@ -7,6 +7,28 @@ if (CORE_URL != false) {
 	});
 }
 
+function htmlEncode(str) {
+    return $('<div/>').text(str).html();
+}
+
+function htmlDecode(str) {
+    return $('<div/>').html(str).text();
+}
+
+function asName(str) {
+    return str.replace(/-/g, ' ');
+}
+
+function asDname(str) {
+    return str.replace(/ /g, '-').toLowerCase();
+}
+
+function capitalize(str) {
+    return str.replace(/\w\S*/g, function (txt) {
+	    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+	});
+}
+
 $.fn.serializeObject = function() {
     var o = {};
     var a = this.serializeArray();
@@ -37,10 +59,10 @@ var SearchArtistView = Backbone.View.extend({
 		this.render();
 	    },
 	render: function() {
-		var content = "<label>Artist:</label>"
+		var content = "<label class='search'>Artist:&nbsp;&nbsp;&nbsp;"
 			    + "<input type='text' id='searchartist_input' />"
 			    + "<input type='button' id='searchartist_button' "
-			    + "value='search'>";
+			    + "value='?' class='btn-search'></label>";
 		this.$el.html(content);
 	    },
 	events: {
@@ -58,10 +80,10 @@ var SearchArtworkView = Backbone.View.extend({
 		this.render();
 	    },
 	render: function() {
-		var content = "<label>Artwork:</label>"
+		var content = "<label class='search'>Artwork:&nbsp;&nbsp;&nbsp;"
 			    + "<input type='text' id='searchartwork_input' />"
 			    + "<input type='button' id='searchartwork_button' "
-			    + "value='search'>";
+			    + "value='?' class='btn-search'></label>";
 		this.$el.html(content);
 	    },
 	events: {
@@ -78,15 +100,16 @@ var ArtistList = Backbone.View.extend({
 	render: function (id) {
 	    var that = this;
 	    if (id && id.dname) {
-		that.artists = new ArtistSearch({ id: id.dname });
+		that.artists = new ArtistSearch({ id: asDname(id.dname) });
 		that.artists.fetch({
 		    success: function (artist) {
-			    content = "<h1>Artists List<h1/><p>";
+			    content = "<h1>Artists Search<h1/><p>";
 			    for (var idx = 0; artist['attributes'][idx];
 				idx++) {
 				dname = artist['attributes'][idx]['dname'];
 				content += "<a href='#artists/" + dname + "/'>"
-					+ dname + "</a><br/>";
+					+ capitalize(asName(dname))
+					+ "</a><br/>";
 			    }
 			    content += "</p>";
 			    that.$el.html(content);
@@ -102,7 +125,8 @@ var ArtistList = Backbone.View.extend({
 				dname =
 				    artists.models[idx]['attributes']['dname'];
 				content += "<a href='#artists/" + dname + "/'>"
-					+ dname + "</a><br/>";
+					+ capitalize(asName(dname))
+					+ "</a><br/>";
 			    }
 			    content += "</p>";
 			    that.$el.html(content);
@@ -117,7 +141,7 @@ var ArtworkList = Backbone.View.extend({
 	render: function (id) {
 	    var that = this;
 	    if (id && id.dname) {
-		that.artworks = new ArtworkSearch({ id: id.dname });
+		that.artworks = new ArtworkSearch({ id: asDname(id.dname) });
 		that.artworks.fetch({
 		    success: function (artwork) {
 			    content = "<h1>Artworks List<h1/><p>";
@@ -125,7 +149,8 @@ var ArtworkList = Backbone.View.extend({
 				idx++) {
 				dname = artwork['attributes'][idx]['dname'];
 				content += "<a href='#artworks/" + dname + "/'>"
-					+ dname + "</a><br/>";
+					+ capitalize(asName(dname))
+					+ "</a><br/>";
 			    }
 			    content += "</p>";
 			    that.$el.html(content);
@@ -141,7 +166,8 @@ var ArtworkList = Backbone.View.extend({
 				dname =
 				    artworks.models[idx]['attributes']['dname'];
 				content += "<a href='#artworks/" + dname + "/'>"
-					+ dname + "</a><br/>";
+					+ capitalize(asName(dname))
+					+ "</a><br/>";
 			    }
 			    content += "</p>";
 			    that.$el.html(content);
