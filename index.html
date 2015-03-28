@@ -40,8 +40,33 @@
 	<meta name="msapplication-config" content="/images/browserconfig.xml">
 	<meta name="theme-color" content="#ffffff">
 	<script language="text/template" class="template" id="srch-tplate">
-	    <label class='search'><%=rc.title%>&nbsp;&nbsp;&nbsp;
-		<input type='text' id='search<%=rc.base%>_input' />
+	    <label class='search'>
+		<input type='text' id='search<%=rc.base%>_input'
+		    placeholder='<%=rc.title%>' />
+	    <% if (rc.base == 'events') { %>
+		<select name='country' id='searchcountry_input'>
+		<% _.each(rc.countries, function(country) {
+			var opts = "";
+			if ($_GET['country']) {
+			    if ($_GET['country'] == country) {
+				opts = " selected='selected'";
+			    }
+			} %>
+		    <option value='<%=country%>'<%=opts%>><%=country%></option>
+		<% }); %>
+		</select>
+		<select name='city' id='searchcity_input'>
+		<% _.each(rc.cities, function(city) {
+			var opts = "";
+			if ($_GET['city']) {
+			    if ($_GET['city'] == city) {
+				opts = " selected='selected'";
+			    }
+			} %>
+		    <option value='<%=city%>'<%=opts%>><%=city%></option>
+		<% }); %>
+		</select>
+	    <% } %>
 		<input type='button' id='search<%=rc.base%>_button' value='?'
 		    class='btn-search'>
 	    </label>
@@ -179,10 +204,94 @@
 	    } %>
 	    </p>
 	</script>
+	<script language="text/template" class="template" id="event-tplate">
+	    <% if (rc.evt.title) {
+		if (rc.evt.dname && rc.evt.dname == "unknown event") {
+		    var body = '', sname = rc.evt.dname;
+		} else {
+		    var sname = rc.evt.title, body = '';
+		    if (rc.evt.group || rc.evt.expo || rc.evt.auction) {
+			body += "<div id='whatdata'>";
+		    }
+		    if (rc.evt.group && rc.evt.group == true) {
+			body += "<b>Group Show</b> ";
+		    } else if (rc.evt.group && rc.evt.group == false) {
+			body += "<b>Solo Show</b> ";
+		    }
+		    if (rc.evt.expo && rc.evt.expo == true) {
+			body += "(exposition)";
+		    } else if (rc.evt.auction && rc.evt.auction == true) {
+			body += "(auction)";
+		    }
+		    if (body.length > 0) { body += "<br/></div>"; }
+		    if (rc.evt.starts) {
+			var thedate =
+			    new Date(rc.evt.starts * 1000).toDateString();
+			body += "<div id='datedata'>";
+			body += "<b>Starts</b>: " + thedate + "<br/>";
+			if (rc.evt.stops) {
+			    thedate =
+				new Date(rc.evt.stops * 1000).toDateString();
+			    body += "<b>Ends</b>: " + thedate + "<br/>";
+			}
+			body += "</div>";
+		    }
+		    if (rc.evt.direction || rc.evt.country) {
+			body += "<div id='locationdata'>";
+		    }
+		    if (rc.evt.direction) {
+			if (rc.evt.maps) {
+			    body += "<a target='_top' href='https://maps.google"
+				 + ".com/" + rc.evt.maps + "'>";
+			}
+			body += rc.evt.direction;
+			if (rc.evt.maps) { body += "</a>"; }
+			body += "<br/>";
+		    }
+		    if (rc.evt.country) {
+			body += " in ";
+			if (rc.evt.direction == undefined) {
+			    if (rc.evt.maps) {
+				body += "<a target='_top' href='https://maps."
+				     + "google.com/" + rc.evt.maps + "'>";
+			    }
+			}
+			if (rc.evt.city) { body += rc.evt.city + ", "; }
+			body += rc.evt.country;
+			if (rc.evt.direction == undefined) {
+			    if (rc.evt.maps) { body += "</a>"; }
+			}
+			body += "<br/>";
+		    }
+		    if (rc.evt.direction || rc.evt.country) {
+			body += "</div>";
+		    }
+		    if (rc.evt.tel || rc.evt.url) {
+			body += "<div id='infodata'>";
+		    }
+		    if (rc.evt.tel) {
+			body += '<b>tel</b>: ' + rc.evt.tel + '<br/>';
+		    }
+		    if (rc.evt.url) {
+			body += "<a target='_top' href='" + rc.evt.url + "'>"
+			     + "Check <b>gallery's site</b> for more data</a>"
+			     + "<br/>";
+		    }
+		    if (rc.evt.tel || rc.evt.url) {
+			body += "</div>";
+		    }
+		} %>
+	    <h1><%=sname%></h1>
+	    <p><%=body%></p>
+	    <% } else { %>
+		<h1>Event not found</h1>
+	    <% } %>
+	</script>
 	<script language="javascript" src="./js/jquery.js"></script>
 	<script language="javascript" src="./js/underscore.js"></script>
 	<script language="javascript" src="./js/backbone.js"></script>
 	<script language="javascript" src="./js/dropdown.js"></script>
+	<script language="javascript" src="./js/lists.js"></script>
 	<title>myArtGallery</title>
     </head>
     <body>
@@ -198,8 +307,15 @@
 		<li id='menuevent'>
 		    Events
 		    <ul id='menudropdown'>
-			<li><a href='#'>Auctions</a></li>
-			<li><a href='#'>Expositions</a></li>
+			<li>
+			    <a href='./index.html?auction=true#search/events/'>Auctions</a>
+			</li>
+			<li>
+			    <a href='./index.html?expo=true#search/events/'>Expositions</a>
+			    <ul id='menudropdown'>
+				<a href='./index.html?expo=true&country=France#search/events/'>France</a>
+			    </ul>
+			</li>
 		    </ul>
 		</li>
 		<li id='menuperso'>
@@ -218,6 +334,7 @@
 		<div class='artistsearchbox'></div>
 		<div class='artworksearchbox'></div>
 	    </div>
+		<div class='eventsearchbox'></div>
 	    <div class='page'></div>
 	</div>
 	<div align='center' id='footer'>Copyleft 2015 by bibi</div>

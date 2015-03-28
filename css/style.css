@@ -1,5 +1,5 @@
 html, body {
-    background: #ffffcc;
+    background: rgb(255,255,204);
     font-size: 86%;
     height: 100%;
     margin: 0;
@@ -36,14 +36,6 @@ input[type=text] {
     background-position: 0px 0px;
     background-size: cover;
     border: none;
-}
-
-.menu {
-    background: #ffcc33;
-    display: inline-block;
-    font-size: 120%; /* pending proper vertical-align: center */
-    font-weight: bold;
-    height: 10%;
 }
 
 #menutop {
@@ -155,4 +147,34 @@ input[type=text] {
 .dropdown li.dropdownOpen > a,
 .dropdown li.dropdownOpen > span {
     background: rgb(160,208,112);
+}
+
+#whatdata {
+    background: rgb(160,208,112);
+    width: 60%;
+}
+
+#datedata {
+    background: rgb(255,255,64);
+    width: 60%;
+}
+
+#locationdata {
+    background: rgb(255,255,128);
+    width: 60%;
+}
+
+#infodata {
+    background: rgb(255,255,196);
+    width: 60%;
+}
+
+#searchcountry_input {
+    line-height: 18px;
+    height: 18px;
+}
+
+#searchcity_input {
+    line-height: 18px;
+    height: 18px;
 }

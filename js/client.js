@@ -4,7 +4,22 @@ RESULTS_PER_PAGE = 20;
 
 if (CORE_URL != false) {
     $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
-	    options.url = CORE_URL + options.url + '/';
+		if ($_GET.expo && $_GET.auction) {
+		    var args = "?type=expo";
+		} else if ($_GET.expo) {
+		    var args = "?type=expo";
+		} else if ($_GET.auction) {
+		    var args = "?type=auction";
+		} else { var args = ''; }
+		if ($_GET.city) {
+		    args += (args.length > 0 ? '&' : '?')
+			 + 'city=' + $_GET.city;
+		}
+		if ($_GET.country) {
+		    args += (args.length > 0 ? '&' : '?')
+			 + 'country=' + $_GET.country;
+		}
+	    options.url = CORE_URL + options.url + '/' + args;
 	});
 }
 
@@ -47,6 +62,13 @@ $.fn.serializeObject = function() {
     return o;
 };
 
+var parts = window.location.search.substr(1).split("&");
+var $_GET = {};
+for (var i = 0; i < parts.length; i++) {
+    var temp = parts[i].split("=");
+    $_GET[decodeURIComponent(temp[0])] = decodeURIComponent(temp[1]);
+}
+
 var ArtistSearch = Backbone.Model.extend({
 	urlRoot: function() {
 		return '/search/artists' + (this.page > 0
@@ -58,6 +80,14 @@ var ArtistSearch = Backbone.Model.extend({
 var ArtworkSearch = Backbone.Model.extend({
 	urlRoot: function() {
 		return '/search/artworks' + (this.page > 0
+					? '/+' + (this.page * RESULTS_PER_PAGE)
+					: '') + '/';
+	    },
+	    page: 0
+    });
+var EventSearch = Backbone.Model.extend({
+	urlRoot: function() {
+		return '/search/events' + (this.page > 0
 					? '/+' + (this.page * RESULTS_PER_PAGE)
 					: '') + '/';
 	    },
@@ -95,6 +125,14 @@ var Artworks = Backbone.Collection.extend({
 	    },
 	    page: 0
     });
+var Events = Backbone.Collection.extend({
+	url: function() {
+		return '/events' + (this.page > 0
+					? '/+' + (this.page * RESULTS_PER_PAGE)
+					: '') + '/';
+	    },
+	    page: 0
+    });
 var Artist = Backbone.Model.extend({
 	urlRoot: function() {
 		return '/artists' + (this.page > 0
@@ -111,6 +149,14 @@ var Artwork = Backbone.Model.extend({
 	    },
 	    page: 0
     });
+var Event = Backbone.Model.extend({
+	urlRoot: function() {
+		return '/events' + (this.page > 0
+					? '/+' + (this.page * RESULTS_PER_PAGE)
+					: '') + '/';
+	    },
+	    page: 0
+    });
 
 _.templateSettings.variable = "rc";
 var template = _.template( $( "script.template" ).html());
@@ -122,7 +168,7 @@ var SearchArtistView = Backbone.View.extend({
 	    },
 	render: function() {
 		var content = _.template($('#srch-tplate').html(),
-				{ title: 'Artists search:', base: 'artist' });
+				{ title: 'Artists search', base: 'artist' });
 		this.$el.html(content);
 	    },
 	events: {
@@ -143,7 +189,7 @@ var SearchArtworkView = Backbone.View.extend({
 	    },
 	render: function() {
 		var content = _.template($('#srch-tplate').html(),
-				{ title: 'Artworks search:', base: 'artwork' });
+				{ title: 'Artworks search', base: 'artwork' });
 		this.$el.html(content);
 	    },
 	events: {
@@ -154,6 +200,69 @@ var SearchArtworkView = Backbone.View.extend({
 		router.navigate('#search/artworks/'
 				+ $("#searchartwork_input").val() + '/',
 				{ trigger: true });
+	    }
+    });
+
+var SearchEventView = Backbone.View.extend({
+	el: '.eventsearchbox',
+	initialize: function() {
+		this.render();
+	    },
+	render: function() {
+		var content = _.template($('#srch-tplate').html(),
+				{ title: 'Events search', base: 'events',
+				  countries: countrylist, cities: citylist });
+		this.$el.html(content);
+	    },
+	events: {
+		"click input[type=button]": "doSearch",
+		"change #searchcity_input": "doSearchCity",
+/*		"change #searchcity_input select": "doSearchCity", */
+		"change #searchcountry_input": "doSearchCountry",
+/*		"change #searchcountry_input select": "doSearchCity", */
+		"keyup :input": "doSearch"
+	    },
+	doSearch: function(event) {
+		router.navigate('#search/events/'
+				+ $("#searchevent_input").val() + '/',
+				{ trigger: true });
+	    },
+	doSearchCity: function(event) {
+		var where =
+		    event.originalEvent.target.selectedOptions['0'].label;
+		console.log(window.location.toString() + " " + where);
+		if (window.location.toString().indexOf('?')) {
+		    var prefix = '&city=';
+		} else { var prefix = '?city='; }
+		if (window.location.toString().indexOf('city=') >= 0) {
+console.log('unimplemented chatte');
+		} else if (window.location.toString().indexOf('#') >= 0) {
+		    var turl = window.location.toString();
+		    var url  = turl.replace(/#/, prefix + where + '#');
+		} else {
+		    var turl = window.location.toString();
+		    var url  = turl + prefix + where;
+		}
+		window.location.assign(url);
+	    },
+	doSearchCountry: function(event) {
+		var turl = window.location.toString();
+		var where =
+		    event.originalEvent.target.selectedOptions['0'].label;
+		console.log(turl + " " + where);
+		if (turl.indexOf('?')) {
+		    var prefix = '&country=';
+		} else { var prefix = '?country='; }
+		if (turl.indexOf('country=') >= 0) {
+		    var url = turl.replace(/country=[^&#]*/,
+					    "country=" + where);
+		
+		} else if (turl.indexOf('#') >= 0) {
+		    var url  = turl.replace(/#/, prefix + where + '#');
+		} else {
+		    var url  = turl + prefix + where;
+		}
+		window.location.assign(url);
 	    }
     });
 
@@ -309,6 +418,57 @@ var ArtworkList = Backbone.View.extend({
 	}
     });
 
+var EventList = Backbone.View.extend({
+	el: '.page',
+	render: function (id) {
+	    var that = this;
+	    if (id && id.dname) {
+		that.evt = new EventSearch({ id: asDname(id.dname) });
+		if (id.page) {
+		    that.evt.page = id.page;
+		}
+		that.evt.fetch({
+		    success: function (evt) {
+			    if (evt['attributes'][RESULTS_PER_PAGE]) {
+				next = id.page ? Math.floor(id.page) + 1 : 1;
+				evt['attributes'].length = RESULTS_PER_PAGE;
+			    } else { next = false; }
+			    var hdata = { title: 'Search Events',
+					  baseurl: 'search/events',
+					  dname: id.dname,
+					  page: ( id.page ? id.page : false ),
+					  next: next };
+			    var data  = { data: evt['attributes'],
+					  baseurl: 'events' };
+			    var history = _.template($('#hstry-tplate').html(),
+						     hdata);
+			    var content = _.template(
+						$('#dnamelist-tplate').html(),
+						data);
+			    that.$el.html(history + content);
+			}
+		    });
+	    } else {
+		evt = new Events();
+		evt.fetch({
+		    success: function (evt) {
+			    evt.models.length = RESULTS_PER_PAGE;
+			    var hdata = { title: 'Events List',
+					  page: 0, next: 0 }
+			    var data  = { data: evt.models,
+					  baseurl: 'events' };
+			    var history = _.template($('#hstry-tplate').html(),
+						hdata);
+			    var content = _.template(
+						$('#dnamelist-tplate').html(),
+						data);
+			    that.$el.html(history + content);
+			}
+		    });
+	    }
+	}
+    });
+
 var ArtistView = Backbone.View.extend({
 	el: '.page',
 	render: function (id) {
@@ -345,6 +505,29 @@ var ArtworkView = Backbone.View.extend({
 	    }
     });
 
+var EventView = Backbone.View.extend({
+	el: '.page',
+	render: function (id) {
+	    var that = this;
+	    that.evt = new Event({ id: id.dname });
+	    that.evt.fetch({
+		success: function (evt) {
+			    if (evt['attributes']['dname']
+				== "unknown event") {
+				var data = false;
+			    } else {
+				var data =
+				    { evt: evt['attributes'] } ;
+				console.log(evt['attributes']);
+			    }
+			    var content = _.template($('#event-tplate').html(),
+						data);
+			    that.$el.html(content);
+			}
+		});
+	    }
+    });
+
 var Router = Backbone.Router.extend({
 	routes: {
 	  '': 'artistlookup',
@@ -363,17 +546,27 @@ var Router = Backbone.Router.extend({
 	  'search/artworks/:lookup/+:increment': 'artworklookup',
 	  'top/artworks/': 'artworktop',
 	  'top/artworks/+:increment': 'artworktop',
-	  'count/artworks/': 'artworkcount'
+	  'count/artworks/': 'artworkcount',
+
+	  'events/:dname/': 'eventshow',
+	  'search/events/': 'eventlookup',
+	  'search/events//': 'eventlookup',
+	  'search/events/:lookup/': 'eventlookup',
+	  'search/events/:lookup/+:increment': 'eventlookup',
+	  'count/events/': 'eventcount'
 	}
     });
 
 var router = new Router();
 var artistLookup = new ArtistList();
 var artworkLookup = new ArtworkList();
+var eventLookup = new EventList();
 var artistView = new ArtistView();
 var artworkView = new ArtworkView();
+var eventView = new EventView();
 var searchArtistView = new SearchArtistView();
 var searchArtworkView = new SearchArtworkView();
+var searchEventView = new SearchEventView();
 
 router.on('route:artistshow', function(dname) {
 	artistView.render({ dname: dname });
@@ -419,6 +612,22 @@ router.on('route:artworktop', function(increment) {
     });
 router.on('route:artworkcount', function() {
 	console.log('route count artworks');
+    });
+
+router.on('route:eventshow', function(dname) {
+	eventView.render({ dname: dname });
+    });
+router.on('route:eventlookup', function(lookup, increment) {
+	if (increment && lookup) {
+	    eventLookup.render({ dname: lookup, page: increment });
+	} else if (lookup) {
+	    eventLookup.render({ dname: lookup });
+	} else {
+	    eventLookup.render();
+	}
+    });
+router.on('route:eventcount', function() {
+	console.log('route count events');
     });
 
 Backbone.history.start();
