@@ -24,33 +24,53 @@ $.fn.serializeObject = function() {
     return o;
 };
 
+var ArtistSearch = Backbone.Model.extend({
+	urlRoot: '/search/artists/'
+    });
 var Artists = Backbone.Collection.extend({
 	url: '/artists/'
     });
-
 var Artist = Backbone.Model.extend({
 	urlRoot: '/artists/'
     });
 
 var ArtistList = Backbone.View.extend({
 	el: '.page',
-	render: function () {
+	render: function (id) {
 	    var that = this;
-	    var artists = new Artists();
-	    artists.fetch({
-		success: function (artists) {
-			content = "<h1>Artists List<h1/><p>";
-			for (var idx = 0; idx < artists.models.length
-			    && idx < 20; idx++) {
-			    dname = artists.models[idx]['attributes']['dname'];
-			    content += "<a href='#/artists/" + dname + "/'>"
-				    + dname + "</a><br/>";
+	    if (id && id.dname) {
+		that.artists = new ArtistSearch({ id: id.dname });
+		that.artists.fetch({
+		    success: function (artist) {
+			    content = "<h1>Artists List<h1/><p>";
+			    for (var idx = 0; artist['attributes'][idx];
+				idx++) {
+				dname = artist['attributes'][idx]['dname'];
+				content += "<a href='#artists/" + dname + "/'>"
+					+ dname + "</a><br/>";
+			    }
+			    content += "</p>";
+			    that.$el.html(content);
 			}
-			content += "</p>";
-			that.$el.html(content);
-		    }
-		});
+		    });
+	    } else {
+		artists = new Artists();
+		artists.fetch({
+		    success: function (artists) {
+			    content = "<h1>Artists List<h1/><p>";
+			    for (var idx = 0; idx < artists.models.length
+				&& idx < 20; idx++) {
+				dname =
+				    artists.models[idx]['attributes']['dname'];
+				content += "<a href='#artists/" + dname + "/'>"
+					+ dname + "</a><br/>";
+			    }
+			    content += "</p>";
+			    that.$el.html(content);
+			}
+		    });
 	    }
+	}
     });
 
 var ArtistView = Backbone.View.extend({
@@ -69,8 +89,7 @@ var ArtistView = Backbone.View.extend({
 			}
 			content += "</h1></br>";
 			if (attrs['bestcountry']) {
-			    content += "Mostly sold in "
-				    + attrs['bestcountry'];
+			    content += "Mainly sold in " + attrs['bestcountry'];
 			    if (attrs['bestamount']) {
 				content += " (ratio: "
 					+ attrs['bestamount'] + ")";
@@ -78,8 +97,14 @@ var ArtistView = Backbone.View.extend({
 			    content += "</br>";
 			}
 			if (attrs['priceidx']) {
-			    content += "Mostly sold " + attrs['priceidx']
-				    + "<br/>";
+			    if (attrs['priceidx'] == 'growing' ||
+				attrs['priceidx'] == 'decreasing') {
+				content += "Prices globally "
+					+ attrs['priceidx'] + "<br/>";
+			    } else {
+				content += "Mostly sold " + attrs['priceidx']
+					+ "<br/>";
+			    }
 			}
 			if (attrs['rank']) {
 			    content += "Rank: " + attrs['rank'] + "<br/>";
@@ -95,30 +120,34 @@ var Router = Backbone.Router.extend({
 	  '': 'home',
 	  'artists/:dname/': 'artistshow',
 	  'search/artists/:lookup/': 'artistlookup',
-	  'count/artists': 'artistscount',
-	  'artworks/*': 'artworkshow',
-	  'search/artworks/*': 'artworklookup',
-	  'count/artworks': 'artworkcount'
+	  'count/artists/': 'artistscount',
+	  'artworks/:dname/': 'artworkshow',
+	  'search/artworks/:lookup/': 'artworklookup',
+	  'count/artworks/': 'artworkcount'
 	}
     });
 var router = new Router();
 var artistList = new ArtistList();
+var artistLookup = new ArtistList();
 var artistView = new ArtistView();
 
 router.on('route:home', function() {
 	artistList.render();
 	console.log('route home');
     });
+
 router.on('route:artistshow', function(dname) {
-	artistView.render({dname: dname});
+	artistView.render({ dname: dname });
 	console.log('route show artist');
     });
 router.on('route:artistlookup', function(lookup) {
+	artistLookup.render({ dname: lookup });
 	console.log('route search artist');
     });
 router.on('route:artistcount', function() {
 	console.log('route count artists');
     });
+
 router.on('route:artworkshow', function() {
 	console.log('route show artwork');
     });
