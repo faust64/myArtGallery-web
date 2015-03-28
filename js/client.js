@@ -1,4 +1,4 @@
-CORE_URL = 'http://localhost:8080';
+CORE_URL = 'http://myartgallery.unetresgrossebite.com';
 RESULTS_PER_PAGE = 20;
 
 var parts = window.location.search.substr(1).split("&");
