@@ -169,12 +169,7 @@ input[type=text] {
     width: 60%;
 }
 
-#searchcountry_input {
-    line-height: 18px;
-    height: 18px;
-}
-
-#searchcity_input {
+#searchplace_input {
     line-height: 18px;
     height: 18px;
 }

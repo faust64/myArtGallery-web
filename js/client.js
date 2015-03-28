@@ -211,56 +211,65 @@ var SearchEventView = Backbone.View.extend({
 	render: function() {
 		var content = _.template($('#srch-tplate').html(),
 				{ title: 'Events search', base: 'events',
-				  countries: countrylist, cities: citylist });
+				  places: citylist });
 		this.$el.html(content);
 	    },
 	events: {
-		"click input[type=button]": "doSearch",
-		"change #searchcity_input": "doSearchCity",
-/*		"change #searchcity_input select": "doSearchCity", */
-		"change #searchcountry_input": "doSearchCountry",
-/*		"change #searchcountry_input select": "doSearchCity", */
-		"keyup :input": "doSearch"
+		"click input[type=button]": "doSearchPattern",
+		"change #searchplace_input": "doSearchPlace",
+		"keyup :input": "doSearchPattern"
 	    },
-	doSearch: function(event) {
-		router.navigate('#search/events/'
-				+ $("#searchevent_input").val() + '/',
-				{ trigger: true });
+	doSearchPattern: function(event) {
+		var val = $("#searchevent_input").val();
+		if (val != undefined) { val += '/'; } else { val = ''; }
+		router.navigate('#search/events/' + val, { trigger: true });
 	    },
-	doSearchCity: function(event) {
-		var where =
+	doSearchPlace: function(event) {
+		var url     = window.location.toString();
+		var where   =
 		    event.originalEvent.target.selectedOptions['0'].label;
-		console.log(window.location.toString() + " " + where);
-		if (window.location.toString().indexOf('?')) {
-		    var prefix = '&city=';
-		} else { var prefix = '?city='; }
-		if (window.location.toString().indexOf('city=') >= 0) {
-console.log('unimplemented chatte');
-		} else if (window.location.toString().indexOf('#') >= 0) {
-		    var turl = window.location.toString();
-		    var url  = turl.replace(/#/, prefix + where + '#');
-		} else {
-		    var turl = window.location.toString();
-		    var url  = turl + prefix + where;
+		var loc     = where.split('/');
+		var country = loc[0], city = loc[1], prefix = '', target = '';
+
+		if (url.indexOf('?')) {
+		    prefix = '&';
+		} else { prefix = '?'; }
+
+		if (url.indexOf('city=') >= 0 && city && city.length) {
+		    var turl = url.replace(/city=[^&#]*/,
+					    "city=" + city);
+		    url = turl;
+		} else if (url.indexOf('city=') >= 0) {
+		    var turl = url.replace(/[?&]city=[^&#]*/, '');
+		    url = turl;
+		} else if (url.indexOf('#') >= 0 && city && city.length) {
+		    var turl  = url.replace(/#/, prefix + 'city=' + city + '#');
+		    url = turl;
+		    prefix = '&';
 		}
-		window.location.assign(url);
-	    },
-	doSearchCountry: function(event) {
-		var turl = window.location.toString();
-		var where =
-		    event.originalEvent.target.selectedOptions['0'].label;
-		console.log(turl + " " + where);
-		if (turl.indexOf('?')) {
-		    var prefix = '&country=';
-		} else { var prefix = '?country='; }
-		if (turl.indexOf('country=') >= 0) {
-		    var url = turl.replace(/country=[^&#]*/,
-					    "country=" + where);
-		
-		} else if (turl.indexOf('#') >= 0) {
-		    var url  = turl.replace(/#/, prefix + where + '#');
+		if (url.indexOf('country=') >= 0
+			&& country && country.length) {
+		    var turl = url.replace(/country=[^&#]*/,
+					    "country=" + country);
+		    url = turl;
+		} else if (url.indexOf('country=') >= 0) {
+		    var turl = url.replace(/[?&]country=[^&#]*/, '');
+		    url = turl;
+		} else if (url.indexOf('#') >= 0 && country &&
+		    country.length) {
+		    var turl  = url.replace(/#/, prefix
+						+ 'country=' + country + '#');
+		    url = turl;
 		} else {
-		    var url  = turl + prefix + where;
+		    if (country && country.length > 0
+			&& city && city.length > 0) {
+			target = prefix + 'country=' + country
+				+ '&city=' + city;
+		    } else if (country && country.length > 0) {
+			target = prefix + 'country=' + country;
+		    }
+		    var turl  = url + target;
+		    url = turl;
 		}
 		window.location.assign(url);
 	    }

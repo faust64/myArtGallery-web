@@ -44,27 +44,25 @@
 		<input type='text' id='search<%=rc.base%>_input'
 		    placeholder='<%=rc.title%>' />
 	    <% if (rc.base == 'events') { %>
-		<select name='country' id='searchcountry_input'>
-		<% _.each(rc.countries, function(country) {
-			var opts = "";
-			if ($_GET['country']) {
-			    if ($_GET['country'] == country) {
-				opts = " selected='selected'";
-			    }
-			} %>
-		    <option value='<%=country%>'<%=opts%>><%=country%></option>
-		<% }); %>
-		</select>
-		<select name='city' id='searchcity_input'>
-		<% _.each(rc.cities, function(city) {
-			var opts = "";
+		<select name='place' id='searchplace_input'>
+		<% _.each(rc.places, function(cities, country) {
+		    var opts = "";
+		    if ($_GET['country'] == country) {
+			if ($_GET['city']) { } else {
+			    opts = " selected='selected'";
+			}
+		    } %>
+		    <option value='<%=country%>/'<%=opts%>><%=country%></option>
+		    <% _.each(cities, function(city) {
+			opts = "";
 			if ($_GET['city']) {
 			    if ($_GET['city'] == city) {
 				opts = " selected='selected'";
 			    }
 			} %>
-		    <option value='<%=city%>'<%=opts%>><%=city%></option>
-		<% }); %>
+		    <option value='<%=country%>/<%=city%>'<%=opts%>><%=country%>/<%=city%></option>
+		    <% });
+		}); %>
 		</select>
 	    <% } %>
 		<input type='button' id='search<%=rc.base%>_button' value='?'
@@ -291,7 +289,7 @@
 	<script language="javascript" src="./js/underscore.js"></script>
 	<script language="javascript" src="./js/backbone.js"></script>
 	<script language="javascript" src="./js/dropdown.js"></script>
-	<script language="javascript" src="./js/lists.js"></script>
+	<script language="javascript" src="./js/list.js"></script>
 	<title>myArtGallery</title>
     </head>
     <body>
