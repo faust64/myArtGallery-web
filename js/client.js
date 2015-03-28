@@ -24,14 +24,53 @@ $.fn.serializeObject = function() {
     return o;
 };
 
-var ArtistSearch = Backbone.Model.extend({
-	urlRoot: '/search/artists/'
+var ArtistSearch = Backbone.Model.extend({ urlRoot: '/search/artists/' });
+var ArtworkSearch = Backbone.Model.extend({ urlRoot: '/search/artworks/' });
+var Artists = Backbone.Collection.extend({ url: '/artists/' });
+var Artworks = Backbone.Collection.extend({ url: '/artworks/' });
+var Artist = Backbone.Model.extend({ urlRoot: '/artists/' });
+var Artwork = Backbone.Model.extend({ urlRoot: '/artworks/' });
+
+var SearchArtistView = Backbone.View.extend({
+	el: '.artistsearchbox',
+	initialize: function() {
+		this.render();
+	    },
+	render: function() {
+		var content = "<label>Artist:</label>"
+			    + "<input type='text' id='searchartist_input' />"
+			    + "<input type='button' id='searchartist_button' "
+			    + "value='search'>";
+		this.$el.html(content);
+	    },
+	events: {
+		"click input[type=button]": "doSearch",
+		"keyup :input": "doSearch"
+	    },
+	doSearch: function(event) {
+		artistLookup.render({ dname: $("#searchartist_input").val() });
+	    }
     });
-var Artists = Backbone.Collection.extend({
-	url: '/artists/'
-    });
-var Artist = Backbone.Model.extend({
-	urlRoot: '/artists/'
+
+var SearchArtworkView = Backbone.View.extend({
+	el: '.artworksearchbox',
+	initialize: function() {
+		this.render();
+	    },
+	render: function() {
+		var content = "<label>Artwork:</label>"
+			    + "<input type='text' id='searchartwork_input' />"
+			    + "<input type='button' id='searchartwork_button' "
+			    + "value='search'>";
+		this.$el.html(content);
+	    },
+	events: {
+		"click input[type=button]": "doSearch",
+		"keyup :input": "doSearch"
+	    },
+	doSearch: function(event) {
+		alert("search for " + $("#searchartwork_input").val());
+	    }
     });
 
 var ArtistList = Backbone.View.extend({
@@ -63,6 +102,45 @@ var ArtistList = Backbone.View.extend({
 				dname =
 				    artists.models[idx]['attributes']['dname'];
 				content += "<a href='#artists/" + dname + "/'>"
+					+ dname + "</a><br/>";
+			    }
+			    content += "</p>";
+			    that.$el.html(content);
+			}
+		    });
+	    }
+	}
+    });
+
+var ArtworkList = Backbone.View.extend({
+	el: '.page',
+	render: function (id) {
+	    var that = this;
+	    if (id && id.dname) {
+		that.artworks = new ArtworkSearch({ id: id.dname });
+		that.artworks.fetch({
+		    success: function (artwork) {
+			    content = "<h1>Artworks List<h1/><p>";
+			    for (var idx = 0; artwork['attributes'][idx];
+				idx++) {
+				dname = artwork['attributes'][idx]['dname'];
+				content += "<a href='#artworks/" + dname + "/'>"
+					+ dname + "</a><br/>";
+			    }
+			    content += "</p>";
+			    that.$el.html(content);
+			}
+		    });
+	    } else {
+		artworks = new Artworks();
+		artworks.fetch({
+		    success: function (artworks) {
+			    content = "<h1>Artists List<h1/><p>";
+			    for (var idx = 0; idx < artworks.models.length
+				&& idx < 20; idx++) {
+				dname =
+				    artworks.models[idx]['attributes']['dname'];
+				content += "<a href='#artworks/" + dname + "/'>"
 					+ dname + "</a><br/>";
 			    }
 			    content += "</p>";
@@ -115,6 +193,19 @@ var ArtistView = Backbone.View.extend({
 	    }
     });
 
+var ArtworkView = Backbone.View.extend({
+	el: '.page',
+	render: function (id) {
+	    var that = this;
+	    that.artworks = new Artwork({id: id.dname});
+	    that.artworks.fetch({
+		success: function (artwork) {
+			that.$el.html("FIXME");
+		    }
+		});
+	    }
+    });
+
 var Router = Backbone.Router.extend({
 	routes: {
 	  '': 'home',
@@ -126,33 +217,41 @@ var Router = Backbone.Router.extend({
 	  'count/artworks/': 'artworkcount'
 	}
     });
+
 var router = new Router();
 var artistList = new ArtistList();
+var artworkList = new ArtworkList();
 var artistLookup = new ArtistList();
+var artworkLookup = new ArtworkList();
 var artistView = new ArtistView();
+var artworkView = new ArtworkView();
+var searchArtistView = new SearchArtistView();
+var searchArtworkView = new SearchArtworkView();
 
 router.on('route:home', function() {
 	artistList.render();
-	console.log('route home');
+//	console.log('route home');
     });
 
 router.on('route:artistshow', function(dname) {
 	artistView.render({ dname: dname });
-	console.log('route show artist');
+//	console.log('route show artist');
     });
 router.on('route:artistlookup', function(lookup) {
 	artistLookup.render({ dname: lookup });
-	console.log('route search artist');
+//	console.log('route search artist');
     });
 router.on('route:artistcount', function() {
 	console.log('route count artists');
     });
 
-router.on('route:artworkshow', function() {
-	console.log('route show artwork');
+router.on('route:artworkshow', function(dname) {
+	artworkView.render({ dname: dname });
+//	console.log('route show artwork');
     });
-router.on('route:artworklookup', function() {
-	console.log('route search artwork');
+router.on('route:artworklookup', function(lookup) {
+	artworkLookup.render({ dname: lookup });
+//	console.log('route search artwork');
     });
 router.on('route:artworkcount', function() {
 	console.log('route count artworks');

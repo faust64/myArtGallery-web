@@ -42,7 +42,27 @@ h1 {
     width: 30%;
 }
 
+#searchbox {
+    background: #ffcc33;
+    display: inline-block;
+    font-size: 120%; /* pending proper vertical-align: center */
+    font-weight: bold;
+    height: 10%;
+    width: 100%;
+}
+
+.artistsearchbox {
+    width: 50%;
+    float: left;
+}
+
+.artworksearchbox {
+    width: 50%;
+    float: right;
+}
+
 #content {
+    width: 100%;
     min-height: 90%;
 }
 
