@@ -41,10 +41,12 @@
 	<meta name="theme-color" content="#ffffff">
 	<script language="text/template" class="template" id="srch-tplate">
 	    <label class='search'>
-		<input type='text' id='search<%=rc.base%>_input'
-		    placeholder='<%=rc.title%>' />
+		<input class='srchiput' type='text' placeholder='<%=rc.title%>'
+		    id='search<%=rc.base%>_input' />
+		<input type='button' id='search<%=rc.base%>_button' value='?'
+		    class='btn-search'>
 	    <% if (rc.base == 'events') { %>
-		<select name='place' id='searchplace_input'>
+		<select class='srchiput' name='place' id='searchplace_input'>
 		<% _.each(rc.places, function(cities, country) {
 		    var opts = "";
 		    if ($_GET['country'] == country) {
@@ -65,8 +67,6 @@
 		}); %>
 		</select>
 	    <% } %>
-		<input type='button' id='search<%=rc.base%>_button' value='?'
-		    class='btn-search'>
 	    </label>
 	</script>
 	<script language="text/template" class="template" id="hstry-tplate">
@@ -137,6 +137,24 @@
 	    } %>
 	    </p>
 	</script>
+	<script language="text/template" class="template"
+	    id="artworklist-tplate">
+	    <p>
+	    <% if (rc.data) {
+		_.each(rc.data, function(item) {
+		    if (item.title) {
+			var durl = 'artworks/' + item.id + '/';
+			sname = capitalize(asName(item.title));
+			if (item.author) {
+			    sname += ' (' + capitalize(asName(item.author))
+				  + ')';
+			} %>
+		<a href="#<%=durl%>"><%=sname%></a><br/>
+		    <% }
+		});
+	    } %>
+	    </p>
+	</script>
 	<script language="text/template" class="template" id="artist-tplate">
 	    <% if (rc.artist) {
 		if (rc.artist.dname && rc.artist.dname == "unknown artist") {
@@ -147,16 +165,21 @@
 			var sname = rc.artist.firstname + ' ';
 		    }
 		    sname += rc.artist.lastname;
-		    if (rc.artist.dstart) {
-			if (rc.artist.dstart == rc.artist.dstop) {
-			    sname += " (" + rc.artist.dstart + ")";
-			} else {
-			    sname += " (" + rc.artist.dstart + " - "
-				+ rc.artist.dstop + ")";
-			}
-		    }
 		    if (rc.artist.attrib) {
 			body += '(attributed to)<br/>';
+		    }
+		    /* else */ if (rc.artist.dstart) {
+			if (rc.artist.dstart == rc.artist.dstop) {
+			    body += "Active in " + rc.artist.dstart;
+			} else {
+			    body += "Active from " + rc.artist.dstart + " to "
+				+ rc.artist.dstop;
+			}
+			if (rc.artist.dstart.match(/[VXI]/) &&
+				rc.artist.dstart.match(/[VXI]/).index == 0) {
+			    body += ' century';
+			}
+			body += "<br/>";
 		    }
 		    if (rc.artist.bestcountry) {
 			body += 'Mainly sold in ' + rc.artist.bestcountry;
@@ -179,28 +202,74 @@
 		    }
 		} %>
 	    <h1><%=sname%></h1>
-	    <p><%=body%></p>
+	    <p id='whatdata'><%=body%></p>
 	    <% } else { %>
 		<h1>Artist not found</h1>
 	    <% } %>
 	</script>
-	<script language="text/template" class="template"
-	    id="artworklist-tplate">
-	    <p>
-	    <% if (rc.data) {
-		_.each(rc.data, function(item) {
-		    if (item.title) {
-			var durl = 'artworks/' + item.id + '/';
-			sname = capitalize(asName(item.title));
-			if (item.author) {
-			    sname += ' (' + capitalize(asName(item.author))
-				  + ')';
-			} %>
-		<a href="#<%=durl%>"><%=sname%></a><br/>
-		    <% }
-		});
-	    } %>
-	    </p>
+	<script language="text/template" class="template" id="artwork-tplate">
+	    <% if (rc.artwork) {
+		if (rc.artwork.dname && rc.artwork.dname == "unknown artwork") {
+		    var body = '', sname = rc.artwork.dname;
+		} else {
+		    var sname = rc.artwork.title, body = '';
+		    if (rc.artwork.category) {
+			body += rc.artwork.category;
+			if (rc.artwork.medium) {
+			    body += ", " + rc.artwork.medium;
+			}
+			body += "<br/>";
+		    }
+		    if (rc.artwork.author) {
+			body += 'From: <a href="#artists/' + rc.artwork.author
+			     + '/">' + capitalize(asName(rc.artwork.author))
+			     + '</a><br/>';
+		    }
+		    if (rc.artwork.completed) {
+			if (rc.artwork.started) {
+			    body += "Started on " + rc.artwork.started
+				 + "<br/>";
+			}
+			body += "Completed on " + rc.artwork.completed
+			     + "<br/>";
+		    }
+		    if (rc.artwork.auctionhouse) {
+			body += "Auction in " + rc.artwork.auctionhouse;
+			if (rc.artwork.lotid) {
+			    body += ", lot number " + rc.artwork.lotid;
+			}
+			if (rc.artwork.salesdate) {
+			    var thedate = new Date(rc.artwork.salesdate * 1000);
+			    body += ", sales on " + thedate.toDateString();
+			}
+			body += "<br/>";
+		    }
+		    if (rc.artwork.hammerprice) {
+			body += "Hammer price: " + rc.artwork.hammerprice
+			     + "<br/>";
+		    }
+		    if (rc.artwork.premiumprice) {
+			body += "Prince including buyer's premium: "
+			     + rc.artwork.premiumprice + "<br/>";
+		    }
+		    if (rc.artwork.lowestprice) {
+			body += "Low estimate: " + rc.artwork.lowestprice
+			     + "<br/>";
+		    }
+		    if (rc.artwork.highestprice) {
+			body += "High estimate: " + rc.artwork.highestprice
+			     + "<br/>";
+		    }
+		    if (rc.artwork.distinctions) {
+			body += "Distinctions: " + rc.artwork.distinctions
+			     + "<br/>";
+		    }
+		} %>
+	    <h1><%=sname%></h1>
+	    <p id='whatdata'><%=body%></p>
+	    <% } else { %>
+		<h1>Artwork not found</h1>
+	    <% } %>
 	</script>
 	<script language="text/template" class="template" id="event-tplate">
 	    <% if (rc.evt.title) {
@@ -312,6 +381,8 @@
 			    <a href='./index.html?expo=true#search/events/'>Expositions</a>
 			    <ul id='menudropdown'>
 				<a href='./index.html?expo=true&country=France#search/events/'>France</a>
+				<a href='./index.html?expo=true&country=USA#search/events/'>USA</a>
+				<a href='./index.html?expo=true&country=United%20Kingdom#search/events/'>United Kingdom</a>
 			    </ul>
 			</li>
 		    </ul>
@@ -328,11 +399,17 @@
 	    </ul>
 	</div>
 	<div align='center' id='content' class='container'>
-	    <div id='searchbox'>
-		<div class='artistsearchbox'></div>
-		<div class='artworksearchbox'></div>
+	    <div id='searchboxtoggle'
+		    onClick='toggle_visibility("searchbox");'>
+		<p id='searchboxtogglebtn'>+ Search +</p>
 	    </div>
+	    <div id='searchbox'>
+		<div id='searchartcontainer'>
+		    <div class='artistsearchbox'></div>
+		    <div class='artworksearchbox'></div>
+		</div>
 		<div class='eventsearchbox'></div>
+	    </div>
 	    <div class='page'></div>
 	</div>
 	<div align='center' id='footer'>Copyleft 2015 by bibi</div>
