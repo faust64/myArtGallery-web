@@ -170,6 +170,7 @@ var ArtistList = Backbone.View.extend({
 		    success: function (artist) {
 			    if (artist['attributes'][RESULTS_PER_PAGE]) {
 				next = id.page ? Math.floor(id.page) + 1 : 1;
+				artist['attributes'].length = RESULTS_PER_PAGE;
 			    } else { next = false; }
 			    var hdata = { title: 'Search Artists',
 					  baseurl: 'search/artists',
@@ -195,6 +196,7 @@ var ArtistList = Backbone.View.extend({
 		    success: function (artist) {
 			    if (artist['attributes'][RESULTS_PER_PAGE]) {
 				next = id.page ? Math.floor(id.page) + 1 : 1;
+				artist['attributes'].length = RESULTS_PER_PAGE;
 			    } else { next = false; }
 			    var hdata = { title: 'Top Artists',
 					  baseurl: 'top/artists',
@@ -214,6 +216,7 @@ var ArtistList = Backbone.View.extend({
 		artists = new Artists();
 		artists.fetch({
 		    success: function (artists) {
+			    artists.models.length = RESULTS_PER_PAGE;
 			    var hdata = { title: 'Artists List',
 					  page: 0, next: 0 }
 			    var data  = { data: artists.models,
@@ -243,6 +246,7 @@ var ArtworkList = Backbone.View.extend({
 		    success: function (artwork) {
 			    if (artwork['attributes'][RESULTS_PER_PAGE]) {
 				next = id.page ? Math.floor(id.page) + 1 : 1;
+				artwork['attributes'].length = RESULTS_PER_PAGE;
 			    } else { next = false; }
 			    var hdata = { title: 'Search Artworks',
 					  baseurl: 'search/artworks',
@@ -268,6 +272,7 @@ var ArtworkList = Backbone.View.extend({
 		    success: function (artwork) {
 			    if (artwork['attributes'][RESULTS_PER_PAGE]) {
 				next = id.page ? Math.floor(id.page) + 1 : 1;
+				artwork['attributes'].length = RESULTS_PER_PAGE;
 			    } else { next = false; }
 			    var hdata = { title: 'Top Artworks',
 					  baseurl: 'top/artworks',
@@ -287,6 +292,7 @@ var ArtworkList = Backbone.View.extend({
 		artworks = new Artworks();
 		artworks.fetch({
 		    success: function (artworks) {
+			    artworks.models.length = RESULTS_PER_PAGE;
 			    var hdata = { title: 'Artworks List',
 					  page: 0, next: 0 }
 			    var data  = { data: artworks.models,
