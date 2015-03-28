@@ -103,7 +103,7 @@ input[type=text] {
 
 #midsrch {
     float: center;
-    vertical-align: center;
+    vertical-align: top;
     display: inline-block;
     width: 80%;
 }
@@ -119,6 +119,10 @@ input[type=text] {
     font-size: 55%;
     height: 15px;
     text-align: center;
+}
+
+#hiddenimage {
+    visibility: hidden;
 }
 
 .dropdown,

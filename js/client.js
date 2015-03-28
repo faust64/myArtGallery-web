@@ -173,18 +173,24 @@ var ArtistList = Backbone.View.extend({
 			    if (id.page && id.page > 0) {
 				prev = Math.floor(id.page) - 1;
 				content += "<a href=\"#search/artists/"
-					+ id.dname + "/+" + prev + "\"><img "
-					+ "src='./img/prev.png' "
-					+ "alt='previous'/></a>";
-			    }
+					+ id.dname + "/+" + prev + "\">";
+				imgid = "";
+			    } else { imgid = " id='hiddenimage'"; }
+			    content += "<img src='./img/prev.png'" + imgid
+					+ " alt='previous' />";
+			    if (id.page && id.page > 0) { content += "</a>"; }
 			    content += "</div><div id='midsrch'><h1>Artists "
 				    + "Search<h1/></div><div id='rightsrch'>"
 			    if (artist['attributes'][RESULTS_PER_PAGE]) {
 				next = id.page ? Math.floor(id.page) + 1 : 1;
 				content += "<a href=\"#search/artists/"
-					+ id.dname + "/+" + next + "\"><img "
-					+ "src='./img/next.png' alt='next'/>"
-					+ "</a>";
+					+ id.dname + "/+" + next + "\">";
+				imgid = "";
+			    } else { imgid = " id='hiddenimage'"; }
+			    content += "<img src='./img/next.png'" + imgid
+					+ " alt='next'/>";
+			    if (artist['attributes'][RESULTS_PER_PAGE]) {
+				content += "</a>";
 			    }
 			    content += "</div></div><p>";
 			    for (var idx = 0; artist['attributes'][idx] &&
@@ -209,16 +215,24 @@ var ArtistList = Backbone.View.extend({
 			    if (id.page && id.page > 0) {
 				prev = Math.floor(id.page) - 1;
 				content += "<a href=\"#top/artists/+" + prev
-					+ "\"><img src='./img/prev.png' "
-					+ "alt='previous'/></a>";
-			    }
+					+ "\">";
+				imgid = "";
+			    } else { imgid = " id='hiddenimage'"; }
+			    content += "<img src='./img/prev.png'" + imgid
+					+ " alt='previous'/>";
+			    if (id.page && id.page > 0) { content += "</a>"; }
 			    content += "</div><div id='midsrch'><h1>Top "
 				    + "Artists<h1/></div><div id='rightsrch'>"
 			    if (artist['attributes'][RESULTS_PER_PAGE]) {
 				next = id.page ? Math.floor(id.page) + 1 : 1;
 				content += "<a href=\"#top/artists/+" + next
-					+ "\"><img src='./img/next.png' "
-					+ "alt='next'/></a>";
+					+ "\">";
+				imgid = "";
+			    } else { imgid = " id='hiddenimage'"; }
+			    content += "<img src='./img/next.png'" + imgid
+					+ " alt='next'/>"
+			    if (artist['attributes'][RESULTS_PER_PAGE]) {
+				content += "</a>";
 			    }
 			    content += "</div></div><p>";
 			    for (var idx = 0; artist['attributes'][idx] &&
@@ -275,18 +289,24 @@ var ArtworkList = Backbone.View.extend({
 			    if (id.page && id.page > 0) {
 				prev = Math.floor(id.page) - 1;
 				content += "<a href=\"#search/artworks/"
-					+ id.dname + "/+" + prev + "\"><img "
-					+ "src='./img/prev.png' "
-					+ "alt='previous'/></a>";
-			    }
+					+ id.dname + "/+" + prev + "\">";
+				imgid = "";
+			    } else { imgid = " id='hiddenimage'"; }
+			    content += "<img src='./img/prev.png' " + imgid
+				    + " alt='previous' />";
+			    if (id.page && id.page > 0) { content += "</a>"; }
 			    content += "</div><div id='midsrch'><h1>Artworks "
 				    + "Search<h1/></div><div id='rightsrch'>"
 			    if (artwork['attributes'][RESULTS_PER_PAGE]) {
 				next = id.page ? Math.floor(id.page) + 1 : 1;
 				content += "<a href=\"#search/artworks/"
-					+ id.dname + "/+" + next + "\"><img "
-					+ "src='./img/next.png' alt='next'/>"
-					+ "</a>";
+					+ id.dname + "/+" + next + "\">";
+				imgid = "";
+			    } else { imgid = " id='hiddenimage'"; }
+			    content += "<img src='./img/next.png'" + imgid
+				    + " alt='next'/>";
+			    if (artwork['attributes'][RESULTS_PER_PAGE]) {
+				content += "</a>";
 			    }
 			    content += "</div></div><p>";
 			    for (var idx = 0; artwork['attributes'][idx] &&
@@ -311,16 +331,24 @@ var ArtworkList = Backbone.View.extend({
 			    if (id.page && id.page > 0) {
 				prev = Math.floor(id.page) - 1;
 				content += "<a href=\"#top/artworks/+" + prev
-					+ "\"><img src='./img/prev.png' "
-					+ "alt='previous'/></a>";
-			    }
+					+ "\">";
+				imgid = "";
+			    } else { imgid = " id='hiddenimage'"; }
+			    content += "<img src='./img/prev.png'" + imgid
+					+ "alt='previous'/>";
+			    if (id.page && id.page > 0) { content += "</a>"; }
 			    content += "</div><div id='midsrch'><h1>Top "
 				    + "Artworks<h1/></div><div id='rightsrch'>"
 			    if (artwork['attributes'][RESULTS_PER_PAGE]) {
 				next = id.page ? Math.floor(id.page) + 1 : 1;
 				content += "<a href=\"#top/artworks/+" + next
-					+ "\"><img src='./img/next.png' "
-					+ "alt='next'/></a>";
+					+ "\">";
+				imgid = "";
+			    } else { imgid = " id='hiddenimage'"; }
+			    content += "<img src='./img/next.png'" + imgid
+				    + "alt='next'/>";
+			    if (artwork['attributes'][RESULTS_PER_PAGE]) {
+				content += "</a>";
 			    }
 			    content += "</div></div><p>";
 			    for (var idx = 0; artwork['attributes'][idx] &&
