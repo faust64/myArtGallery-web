@@ -8,8 +8,145 @@
 	<link rel="stylesheet" href="./css/dropdown.css" type="text/css" />
 	<link rel="icon" type="image/vnd.microsoft.icon" href="./favicon.ico" />
 	<link rel="SHORTCUT ICON" href="./favicon.ico" />
-	<script language="javascript" src="./js/underscore-min.js"></script>
+	<script language="text/template" class="template" id="srch-tplate">
+	    <label class='search'><%=rc.title%>&nbsp;&nbsp;&nbsp;
+		<input type='text' id='search<%=rc.base%>_input' />
+		<input type='button' id='search<%=rc.base%>_button' value='?'
+		    class='btn-search'>
+	    </label>
+	</script>
+	<script language="text/template" class="template" id="hstry-tplate">
+	    <div id='srch'><div id='leftsrch'>
+	    <% if (rc.dname) {
+		var baseurl = rc.baseurl + '/' + rc.dname;
+	    } else {
+		var baseurl = rc.baseurl;
+	    }
+	    if (rc.page && rc.page > 0) {
+		var prev = Math.floor(rc.page) - 1;
+		var imgid = " id='showsrch'"; %>
+		<a href="#<%=baseurl%>/+<%=prev%>">
+	    <% } else {
+		var imgid = " id='hiddensrch'";
+	    } %>
+		    <img src='./images/prev.png'<%=imgid%> alt='previous'/>
+	    <% if (rc.page && rc.page > 0) { %>
+		</a>
+	    <% } %>
+	    </div>
+	    <div id='midsrch'><h1><%=rc.title%><h1/></div>
+	    <div id='rightsrch'>
+	    <% if (rc.next && rc.next > 0) {
+		var imgid = " id='showsrch'"; %>
+		<a href="#<%=baseurl%>/+<%=rc.next%>">
+	    <% } else {
+		var imgid = " id='hiddensrch'";
+	    } %>
+		    <img src='./images/next.png'<%=imgid%> alt='next'/>
+	    <% if (rc.next && rc.next > 0) { %>
+		</a>
+	    <% } %>
+	    </div></div>
+	</script>
+	<script language="text/template" class="template" id="dnamelist-tplate">
+	    <p>
+	    <% if (rc.data) {
+		_.each(rc.data, function(item) {
+		    if (item.attributes && item.attributes.dname) {
+			var durl = rc.baseurl + '/' + item.attributes.dname;
+			var sname = capitalize(asName(item.attributes.dname));
+		    } else if (item.dname) {
+			var durl = rc.baseurl + '/' + item.dname;
+			var sname = capitalize(asName(item.dname));
+		    } else { var sname = ""; }
+		    if (sname != "") { %>
+		<a href="#<%=durl%>/"><%=sname%></a><br/>
+		    <% }
+		});
+	    } %>
+	    </p>
+	</script>
+	<script language="text/template" class="template"
+	    id="artistlist-tplate">
+	    <p>
+	    <% if (rc.data) {
+		_.each(rc.data, function(item) {
+		    if (item.lastname) {
+			var sname = '', durl = 'artists/' + item.id + '/';
+			if (item.firstname) {
+			    sname += capitalize(asName(item.firstname)) + ' ';
+			}
+			sname += asName(item.lastname).toUpperCase(); %>
+		<a href="#<%=durl%>"><%=sname%></a><br/>
+		    <% }
+		});
+	    } %>
+	    </p>
+	</script>
+	<script language="text/template" class="template" id="artist-tplate">
+	    <% if (rc.artist) {
+		if (rc.artist.dname && rc.artist.dname == "unknown artist") {
+		    var body = '', sname = rc.artist.dname;
+		} else {
+		    var sname = '', body = '';
+		    if (rc.artist.fisrtname) {
+			var sname = rc.artist.fisrtname + ' ';
+		    }
+		    sname += rc.artist.lastname;
+		    if (rc.artist.dstart) {
+			if (rc.artist.dstart == rc.artist.dstop) {
+			    sname += " (" + rc.artist.dstart + ")";
+			} else {
+			    sname += " (" + rc.artist.dstart + " - "
+				+ rc.artist.dstop + ")";
+			}
+		    }
+		    if (rc.artist.bestcountry) {
+			body += 'Mainly sold in ' + rc.artist.bestcountry;
+			if (rc.artist.bestamount) {
+			    body += ' (ratio: ' + rc.artist.bestamount + ')';
+			}
+			body += "<br/>";
+		    }
+		    if (rc.artist.priceidx) {
+			if (rc.artist.priceidx == 'growing' ||
+			    rc.artist.priceidx == 'decreasing') {
+			    body += "Prices globally " + rc.artist.priceidx;
+			} else {
+			    body += "Mostly sold " + rc.artist.priceidx;
+			}
+			body += "<br/>";
+		    }
+		    if (rc.artist.rank) {
+			body += "Rank: " + rc.artist.rank + "<br/>";
+		    }
+		} %>
+	    <h1><%=sname%></h1>
+	    <p><%=body%></p>
+	    <% } else { %>
+		<h1>Artist not found</h1>
+	    <% } %>
+	</script>
+	<script language="text/template" class="template"
+	    id="artworklist-tplate">
+	    <p>
+	    <% if (rc.data) {
+		_.each(rc.data, function(item) {
+		    if (item.title) {
+			var durl = 'artworks/' + item.id + '/';
+			sname = capitalize(asName(item.title));
+			if (item.author) {
+			    sname += ' (' + capitalize(asName(item.author))
+				  + ')';
+			} %>
+		<a href="#<%=durl%>"><%=sname%></a><br/>
+		    <% }
+		});
+	    } %>
+	    </p>
+	</script>
 	<script language="javascript" src="./js/jquery.min.js"></script>
+	<script language="javascript" src="./js/underscore-min.js"></script>
 	<script language="javascript" src="./js/backbone-min.js"></script>
 	<script language="javascript" src="./js/dropdown.js"></script>
 	<title>myArtGallery</title>

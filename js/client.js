@@ -112,16 +112,17 @@ var Artwork = Backbone.Model.extend({
 	    page: 0
     });
 
+_.templateSettings.variable = "rc";
+var template = _.template( $( "script.template" ).html());
+
 var SearchArtistView = Backbone.View.extend({
 	el: '.artistsearchbox',
 	initialize: function() {
 		this.render();
 	    },
 	render: function() {
-		var content = "<label class='search'>Artist:&nbsp;&nbsp;&nbsp;"
-			    + "<input type='text' id='searchartist_input' />"
-			    + "<input type='button' id='searchartist_button' "
-			    + "value='?' class='btn-search'></label>";
+		var content = _.template($('#srch-tplate').html(),
+				{ title: 'Artists search:', base: 'artist' });
 		this.$el.html(content);
 	    },
 	events: {
@@ -141,10 +142,8 @@ var SearchArtworkView = Backbone.View.extend({
 		this.render();
 	    },
 	render: function() {
-		var content = "<label class='search'>Artwork:&nbsp;&nbsp;&nbsp;"
-			    + "<input type='text' id='searchartwork_input' />"
-			    + "<input type='button' id='searchartwork_button' "
-			    + "value='?' class='btn-search'></label>";
+		var content = _.template($('#srch-tplate').html(),
+				{ title: 'Artworks search:', base: 'artwork' });
 		this.$el.html(content);
 	    },
 	events: {
@@ -169,39 +168,22 @@ var ArtistList = Backbone.View.extend({
 		}
 		that.artists.fetch({
 		    success: function (artist) {
-			    content = "<div id='srch'><div id='leftsrch'>";
-			    if (id.page && id.page > 0) {
-				prev = Math.floor(id.page) - 1;
-				content += "<a href=\"#search/artists/"
-					+ id.dname + "/+" + prev + "\">";
-				imgid = " id='showsrch'";
-			    } else { imgid = " id='hiddensrch'"; }
-			    content += "<img src='./img/prev.png'" + imgid
-					+ " alt='previous' />";
-			    if (id.page && id.page > 0) { content += "</a>"; }
-			    content += "</div><div id='midsrch'><h1>Artists "
-				    + "Search<h1/></div><div id='rightsrch'>"
 			    if (artist['attributes'][RESULTS_PER_PAGE]) {
 				next = id.page ? Math.floor(id.page) + 1 : 1;
-				content += "<a href=\"#search/artists/"
-					+ id.dname + "/+" + next + "\">";
-				imgid = " id='showsrch'";
-			    } else { imgid = " id='hiddensrch'"; }
-			    content += "<img src='./img/next.png'" + imgid
-					+ " alt='next'/>";
-			    if (artist['attributes'][RESULTS_PER_PAGE]) {
-				content += "</a>";
-			    }
-			    content += "</div></div><p>";
-			    for (var idx = 0; artist['attributes'][idx] &&
-				idx < RESULTS_PER_PAGE; idx++) {
-				dname = artist['attributes'][idx]['dname'];
-				content += "<a href=\"#artists/" + dname
-					+ "/\">" + capitalize(asName(dname))
-					+ "</a><br/>";
-			    }
-			    content += "</p>";
-			    that.$el.html(content);
+			    } else { next = false; }
+			    var hdata = { title: 'Search Artists',
+					  baseurl: 'search/artists',
+					  dname: id.dname,
+					  page: ( id.page ? id.page : false ),
+					  next: next };
+			    var data  = { data: artist['attributes'],
+					  baseurl: 'artists' };
+			    var history = _.template($('#hstry-tplate').html(),
+						hdata);
+			    var content = _.template(
+						$('#dnamelist-tplate').html(),
+						data);
+			    that.$el.html(history + content);
 			}
 		    });
 	    } else if (id && id.topartist) {
@@ -211,63 +193,37 @@ var ArtistList = Backbone.View.extend({
 		}
 		that.artists.fetch({
 		    success: function (artist) {
-			    content = "<div id='srch'><div id='leftsrch'>";
-			    if (id.page && id.page > 0) {
-				prev = Math.floor(id.page) - 1;
-				content += "<a href=\"#top/artists/+" + prev
-					+ "\">";
-				imgid = " id='showsrch'";
-			    } else { imgid = " id='hiddensrch'"; }
-			    content += "<img src='./img/prev.png'" + imgid
-					+ " alt='previous'/>";
-			    if (id.page && id.page > 0) { content += "</a>"; }
-			    content += "</div><div id='midsrch'><h1>Top "
-				    + "Artists<h1/></div><div id='rightsrch'>"
 			    if (artist['attributes'][RESULTS_PER_PAGE]) {
 				next = id.page ? Math.floor(id.page) + 1 : 1;
-				content += "<a href=\"#top/artists/+" + next
-					+ "\">";
-				imgid = " id='showsrch'";
-			    } else { imgid = " id='hiddensrch'"; }
-			    content += "<img src='./img/next.png'" + imgid
-					+ " alt='next'/>"
-			    if (artist['attributes'][RESULTS_PER_PAGE]) {
-				content += "</a>";
-			    }
-			    content += "</div></div><p>";
-			    for (var idx = 0; artist['attributes'][idx] &&
-				idx < RESULTS_PER_PAGE; idx++) {
-				who = artist['attributes'][idx];
-				if (! who['lastname']) { continue; }
-				content += "<a href=\"#artists/"
-					+ who['id'] + "/\">";
-				if (who['firstname']) {
-				    content +=
-					capitalize(asName(who['firstname']))
-					+ ' ';
-				}
-				content += asName(who['lastname']).toUpperCase()
-					+ "</a><br/>";
-			    }
-			    content += "</p>";
-			    that.$el.html(content);
+			    } else { next = false; }
+			    var hdata = { title: 'Top Artists',
+					  baseurl: 'top/artists',
+					  dname: false,
+					  page: ( id.page ? id.page : false ),
+					  next: next };
+			    var data = { data: artist['attributes'] };
+			    var history = _.template($('#hstry-tplate').html(),
+						hdata);
+			    var content = _.template(
+						$('#artistlist-tplate').html(),
+						data);
+			    that.$el.html(history + content);
 			}
 		    });
 	    } else {
 		artists = new Artists();
 		artists.fetch({
 		    success: function (artists) {
-			    content = "<h1>Artists List<h1/><p>";
-			    for (var idx = 0; idx < artists.models.length
-				&& idx < RESULTS_PER_PAGE; idx++) {
-				dname =
-				    artists.models[idx]['attributes']['dname'];
-				content += "<a href=\"#artists/" + dname
-					+ "/\">" + capitalize(asName(dname))
-					+ "</a><br/>";
-			    }
-			    content += "</p>";
-			    that.$el.html(content);
+			    var hdata = { title: 'Artists List',
+					  page: 0, next: 0 }
+			    var data  = { data: artists.models,
+					  baseurl: 'artists' };
+			    var history = _.template($('#hstry-tplate').html(),
+						hdata);
+			    var content = _.template(
+						$('#dnamelist-tplate').html(),
+						data);
+			    that.$el.html(history + content);
 			}
 		    });
 	    }
@@ -285,39 +241,22 @@ var ArtworkList = Backbone.View.extend({
 		}
 		that.artworks.fetch({
 		    success: function (artwork) {
-			    content = "<div id='srch'><div id='leftsrch'>";
-			    if (id.page && id.page > 0) {
-				prev = Math.floor(id.page) - 1;
-				content += "<a href=\"#search/artworks/"
-					+ id.dname + "/+" + prev + "\">";
-				imgid = " id='showsrch'";
-			    } else { imgid = " id='hiddensrch'"; }
-			    content += "<img src='./img/prev.png' " + imgid
-				    + " alt='previous' />";
-			    if (id.page && id.page > 0) { content += "</a>"; }
-			    content += "</div><div id='midsrch'><h1>Artworks "
-				    + "Search<h1/></div><div id='rightsrch'>"
 			    if (artwork['attributes'][RESULTS_PER_PAGE]) {
 				next = id.page ? Math.floor(id.page) + 1 : 1;
-				content += "<a href=\"#search/artworks/"
-					+ id.dname + "/+" + next + "\">";
-				imgid = " id='showsrch'";
-			    } else { imgid = " id='hiddensrch'"; }
-			    content += "<img src='./img/next.png'" + imgid
-				    + " alt='next'/>";
-			    if (artwork['attributes'][RESULTS_PER_PAGE]) {
-				content += "</a>";
-			    }
-			    content += "</div></div><p>";
-			    for (var idx = 0; artwork['attributes'][idx] &&
-				idx < RESULTS_PER_PAGE; idx++) {
-				dname = artwork['attributes'][idx]['dname'];
-				content += "<a href=\"#artworks/" + dname
-					+ "/\">" + capitalize(asName(dname))
-					+ "</a><br/>";
-			    }
-			    content += "</p>";
-			    that.$el.html(content);
+			    } else { next = false; }
+			    var hdata = { title: 'Search Artworks',
+					  baseurl: 'search/artworks',
+					  dname: id.dname,
+					  page: ( id.page ? id.page : false ),
+					  next: next };
+			    var data  = { data: artwork['attributes'],
+					  baseurl: 'artworks' };
+			    var history = _.template($('#hstry-tplate').html(),
+						     hdata);
+			    var content = _.template(
+						$('#dnamelist-tplate').html(),
+						data);
+			    that.$el.html(history + content);
 			}
 		    });
 	    } else if (id && id.topartwork) {
@@ -327,58 +266,37 @@ var ArtworkList = Backbone.View.extend({
 		}
 		that.artworks.fetch({
 		    success: function (artwork) {
-			    content = "<div id='srch'><div id='leftsrch'>";
-			    if (id.page && id.page > 0) {
-				prev = Math.floor(id.page) - 1;
-				content += "<a href=\"#top/artworks/+" + prev
-					+ "\">";
-				imgid = " id='showsrch'";
-			    } else { imgid = " id='hiddensrch'"; }
-			    content += "<img src='./img/prev.png'" + imgid
-					+ "alt='previous'/>";
-			    if (id.page && id.page > 0) { content += "</a>"; }
-			    content += "</div><div id='midsrch'><h1>Top "
-				    + "Artworks<h1/></div><div id='rightsrch'>"
 			    if (artwork['attributes'][RESULTS_PER_PAGE]) {
 				next = id.page ? Math.floor(id.page) + 1 : 1;
-				content += "<a href=\"#top/artworks/+" + next
-					+ "\">";
-				imgid = " id='showsrch'";
-			    } else { imgid = " id='hiddensrch'"; }
-			    content += "<img src='./img/next.png'" + imgid
-				    + "alt='next'/>";
-			    if (artwork['attributes'][RESULTS_PER_PAGE]) {
-				content += "</a>";
-			    }
-			    content += "</div></div><p>";
-			    for (var idx = 0; artwork['attributes'][idx] &&
-				idx < RESULTS_PER_PAGE; idx++) {
-				what = artwork['attributes'][idx];
-				if (! what['title']) { continue; }
-				content += "<a href=\"#artworks/"
-					+ what['id'] + "/\">";
-				content += capitalize(asName(what['title']))
-					+ "</a><br/>";
-			    }
-			    content += "</p>";
-			    that.$el.html(content);
+			    } else { next = false; }
+			    var hdata = { title: 'Top Artworks',
+					  baseurl: 'top/artworks',
+					  dname: false,
+					  page: ( id.page ? id.page : false ),
+					  next: next };
+			    var data = { data: artwork['attributes'] };
+			    var history = _.template($('#hstry-tplate').html(),
+						     hdata);
+			    var content = _.template(
+						$('#artworklist-tplate').html(),
+						     data);
+			    that.$el.html(history + content);
 			}
 		    });
 	    } else {
 		artworks = new Artworks();
 		artworks.fetch({
 		    success: function (artworks) {
-			    content = "<h1>Artworks List<h1/><p>";
-			    for (var idx = 0; idx < artworks.models.length
-				&& idx < RESULTS_PER_PAGE; idx++) {
-				dname =
-				    artworks.models[idx]['attributes']['dname'];
-				content += "<a href=\"#artworks/" + dname
-					+ "/\">" + capitalize(asName(dname))
-					+ "</a><br/>";
-			    }
-			    content += "</p>";
-			    that.$el.html(content);
+			    var hdata = { title: 'Artworks List',
+					  page: 0, next: 0 }
+			    var data  = { data: artworks.models,
+					  baseurl: 'artworks' };
+			    var history = _.template($('#hstry-tplate').html(),
+						hdata);
+			    var content = _.template(
+						$('#dnamelist-tplate').html(),
+						data);
+			    that.$el.html(history + content);
 			}
 		    });
 	    }
@@ -389,48 +307,19 @@ var ArtistView = Backbone.View.extend({
 	el: '.page',
 	render: function (id) {
 	    var that = this;
-	    that.artists = new Artist({id: id.dname});
+	    that.artists = new Artist({ id: id.dname });
 	    that.artists.fetch({
 		success: function (artist) {
-			content = "<h1>";
-			if (artist['attributes']['dname'] == "unknown artist") {
-			    content += artist['attributes']['dname']
-				    + "</h1></br>";
-			} else {
-			    attrs = artist['attributes']['0'];
-console.log(attrs);
-			    if (attrs['firstname']) {
-				content += attrs['firstname'] + ' ';
+			    if (artist['attributes']['dname']
+				== "unknown artist") {
+				var data = false;
+			    } else {
+				var data =
+				    { artist: artist['attributes']['0'] } ;
+				console.log(artist['attributes']['0']);
 			    }
-			    content += attrs['lastname'];
-			    if (attrs['dstart']) {
-				content += " (" + attrs['dstart'] + " - "
-					+ attrs['dstop'] + ")";
-			    }
-			    content += "</h1></br>";
-			    if (attrs['bestcountry']) {
-				content += "Mainly sold in "
-					+ attrs['bestcountry'];
-				if (attrs['bestamount']) {
-				    content += " (ratio: "
-					    + attrs['bestamount'] + ")";
-				}
-				content += "</br>";
-			    }
-			    if (attrs && attrs['priceidx']) {
-				if (attrs['priceidx'] == 'growing' ||
-				    attrs['priceidx'] == 'decreasing') {
-				    content += "Prices globally "
-					    + attrs['priceidx'] + "<br/>";
-				} else {
-				    content += "Mostly sold "
-					    + attrs['priceidx'] + "<br/>";
-				}
-			    }
-			    if (attrs && attrs['rank']) {
-				content += "Rank: " + attrs['rank'] + "<br/>";
-			    }
-			}
+			    var content = _.template($('#artist-tplate').html(),
+						data);
 			that.$el.html(content);
 		    }
 		});

@@ -30,7 +30,7 @@ input[type=text] {
 }
 
 .btn-search {
-    background-image: url(../img/search.gif);
+    background-image: url(../images/search.gif);
     background-color: transparent;
     background-repeat: no-repeat;
     background-position: 0px 0px;
