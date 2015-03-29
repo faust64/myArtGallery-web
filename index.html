@@ -44,7 +44,7 @@
 		<input class='srchiput' type='text' placeholder='<%=rc.title%>'
 		    id='search<%=rc.base%>_input' />
 		<input type='button' id='search<%=rc.base%>_button' value='?'
-		    class='btn-search'>
+		    class='btn-search' />
 	    <% if (rc.base == 'events') { %>
 		<select class='srchiput' name='place' id='searchplace_input'>
 		<% _.each(rc.places, function(cities, country) {

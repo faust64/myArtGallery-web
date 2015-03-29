@@ -228,12 +228,12 @@ var SearchEventView = Backbone.View.extend({
 		this.$el.html(content);
 	    },
 	events: {
+		"keyup :input": "doSearchPattern",
 		"click input[type=button]": "doSearchPattern",
-		"change #searchplace_input": "doSearchPlace",
-		"keyup :input": "doSearchPattern"
+		"change #searchplace_input": "doSearchPlace"
 	    },
 	doSearchPattern: function(event) {
-		var val = $("#searchevent_input").val();
+		var val = $("#searchevents_input").val();
 		if (val != undefined) { val += '/'; } else { val = ''; }
 		router.navigate('#search/events/' + val, { trigger: true });
 	    },
