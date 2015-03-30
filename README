@@ -1,0 +1,9 @@
+SETUP INSTRUCTIONS:
+
+Install some webserver (nginx would do)
+Modify CORE_URL (js/client.js) according to your setup (should point to your
+main webserver)
+Since this part is completely static, it may as well be served by your main
+webservers (front) / multiplying nodes serving this part of your application
+would not be as much efficient, as simply adding workers to your nginx
+configuration.

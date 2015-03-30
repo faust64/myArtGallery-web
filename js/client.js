@@ -502,7 +502,7 @@ var ArtistView = Backbone.View.extend({
 			    } else {
 				var data =
 				    { artist: artist['attributes']['0'] } ;
-				console.log(artist['attributes']['0']);
+//				console.log(artist['attributes']['0']);
 			    }
 			    var content = _.template($('#artist-tplate').html(),
 						data);
@@ -524,7 +524,7 @@ var ArtworkView = Backbone.View.extend({
 			    } else {
 				var data =
 				    { artwork: artwork['attributes']['0'] } ;
-				console.log(artwork['attributes']['0']);
+//				console.log(artwork['attributes']['0']);
 			    }
 			    var content =
 				_.template($('#artwork-tplate').html(), data);
@@ -546,7 +546,7 @@ var EventView = Backbone.View.extend({
 			    } else {
 				var data =
 				    { evt: evt['attributes'] } ;
-				console.log(evt['attributes']);
+//				console.log(evt['attributes']);
 			    }
 			    var content = _.template($('#event-tplate').html(),
 						data);
