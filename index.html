@@ -142,14 +142,16 @@
 	    <p>
 	    <% if (rc.data) {
 		_.each(rc.data, function(item) {
-		    if (item.title) {
-			var durl = 'artworks/' + item.id + '/';
-			sname = capitalize(asName(item.title));
-			if (item.author) {
-			    sname += ' (' + capitalize(asName(item.author))
+		    if (item.dname) {
+			var durl = '#artworks/' + item.id + '/';
+			sname = capitalize(asName(item.dname));
+			if (item.authorid) {
+			    sname += ' (' + capitalize(asName(item.authordn))
 				  + ')';
+			    durl = './index.html?authorid=' + item.authorid
+				 + '#' + durl;
 			} %>
-		<a href="#<%=durl%>"><%=sname%></a><br/>
+		<a href="<%=durl%>"><%=sname%></a><br/>
 		    <% }
 		});
 	    } %>
@@ -168,7 +170,7 @@
 		    if (rc.artist.attrib) {
 			body += '(attributed to)<br/>';
 		    }
-		    /* else */ if (rc.artist.dstart) {
+		    if (rc.artist.dstart) {
 			if (rc.artist.dstart == rc.artist.dstop) {
 			    body += "Active in " + rc.artist.dstart;
 			} else {
@@ -213,16 +215,19 @@
 		    var body = '', sname = rc.artwork.dname;
 		} else {
 		    var sname = rc.artwork.title, body = '';
-		    if (rc.artwork.category) {
-			body += rc.artwork.category;
-			if (rc.artwork.medium) {
-			    body += ", " + rc.artwork.medium;
+		    if (rc.artwork.discipline) {
+			body += rc.artwork.discipline;
+			if (rc.artwork.type) {
+			    body += ", " + rc.artwork.type;
 			}
 			body += "<br/>";
 		    }
-		    if (rc.artwork.author) {
-			body += 'From: <a href="#artists/' + rc.artwork.author
-			     + '/">' + capitalize(asName(rc.artwork.author))
+		    if (rc.artwork.technique) {
+			body += rc.artwork.technique + '<br/>';
+		    }
+		    if (rc.artwork.authordn) {
+			body += 'From: <a href="#artists/' + rc.artwork.authordn
+			     + '/">' + capitalize(asName(rc.artwork.authordn))
 			     + '</a><br/>';
 		    }
 		    if (rc.artwork.completed) {
@@ -234,15 +239,15 @@
 			     + "<br/>";
 		    }
 		    if (rc.artwork.auctionhouse) {
-			body += "Auction in " + rc.artwork.auctionhouse;
-			if (rc.artwork.lotid) {
-			    body += ", lot number " + rc.artwork.lotid;
-			}
-			if (rc.artwork.salesdate) {
-			    var thedate = new Date(rc.artwork.salesdate * 1000);
-			    body += ", sales on " + thedate.toDateString();
-			}
-			body += "<br/>";
+			body += "Auction in " + rc.artwork.auctionhouse
+			     + "<br/>";
+		    }
+		    if (rc.artwork.lotid) {
+			body += "Lot ID: " + rc.artwork.lotid + "<br/>";
+		    }
+		    if (rc.artwork.selldate) {
+			var thedate = new Date(rc.artwork.selldate * 1000);
+			body += "Sold on " + thedate.toDateString() + "<br/>";
 		    }
 		    if (rc.artwork.hammerprice) {
 			body += "Hammer price: " + rc.artwork.hammerprice
