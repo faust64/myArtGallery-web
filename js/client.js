@@ -33,13 +33,25 @@ function capitalize(str) {
 /* * jquery * */
 if (CORE_URL != false) {
     $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+		var args = '';
 		if ($_GET.expo && $_GET.auction) {
-		    var args = "?type=expo";
+		    args = "?type=expo";
 		} else if ($_GET.expo) {
-		    var args = "?type=expo";
+		    args = "?type=expo";
 		} else if ($_GET.auction) {
-		    var args = "?type=auction";
-		} else { var args = ''; }
+		    args = "?type=auction";
+		} else if ($_GET.painting) {
+		    args = "?type=painting";
+		} else if ($_GET.sculpture) {
+		    args = "?type=sculpture";
+		}
+		if ($_GET.authorid) {
+		    args += (args.length > 0 ? '&' : '?')
+			 + 'authorid=' + $_GET.authorid;
+		} else if ($_GET.authordn) {
+		    args += (args.length > 0 ? '&' : '?')
+			 + 'authordn=' + $_GET.authordn;
+		}
 		if ($_GET.city) {
 		    args += (args.length > 0 ? '&' : '?')
 			 + 'city=' + $_GET.city;
