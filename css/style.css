@@ -16,12 +16,12 @@ h1 {
 }
 
 input[type=text] {
+    font-size: 13px;
     height: 15px;
     line-height: 15px;
-    font-size: 13px;
-    width: 50%;
-    margin-top: 0px;
     margin-bottom: 0px;
+    margin-top: 0px;
+    width: 50%;
 }
 
 .search {
@@ -29,10 +29,10 @@ input[type=text] {
 }
 
 .btn-search {
-    background-image: url(../images/search.png);
     background-color: transparent;
-    background-repeat: no-repeat;
+    background-image: url(../images/search.png);
     background-position: 0px 0px;
+    background-repeat: no-repeat;
     background-size: cover;
     border: none;
 }
@@ -57,8 +57,9 @@ input[type=text] {
 }
 
 #searchbox {
-    display: none;
     background: rgb(255,204,51);
+    border-radius: 0 0 10px 10px;
+    display: none;
     font-size: 120%; /* pending proper vertical-align: center */
     font-weight: bold;
     height: 20%;
@@ -70,33 +71,34 @@ input[type=text] {
 }
 
 #searchartcontainer {
-    width: 50%;
     display: inline-block;
     float: left;
+    width: 50%;
 }
 
 .eventsearchbox {
-    width: 50%;
     display: inline-block;
     float: right;
+    width: 50%;
 }
 
 #searchboxtoggle {
     background: rgb(255,204,51);
+    border-radius: 0 0 10px 10px;
     font-size: 75%;
     height: 18px;
     width: 100%;
 }
 
 .srchiput {
-    width: 50%;
     display: inline-block;
     text-align: center;
+    width: 50%;
 }
 
 #content {
-    width: 100%;
     min-height: 90%;
+    width: 90%;
 }
 
 #srch {
@@ -114,9 +116,9 @@ input[type=text] {
 }
 
 #midsrch {
+    display: inline-block;
     float: center;
     height: 100%;
-    display: inline-block;
     width: 80%;
 }
 
@@ -153,11 +155,16 @@ input[type=text] {
     background: rgb(128,192,64);
 }
 
+.dropdown {
+    border-radius: 10px 10px 0 0;
+    width: 90%;
+}
+
 .dropdown a,
 .dropdown span {
-    padding: 0.25em 0.5em;
     color: white;
-    transition: background 0.2s;
+    padding: 0.25em 0.5em;
+    transition: background 0.3s;
 }
 
 .dropdown li:hover > a,
@@ -188,6 +195,6 @@ input[type=text] {
 }
 
 #searchplace_input {
-    line-height: 18px;
     height: 18px;
+    line-height: 18px;
 }

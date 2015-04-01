@@ -89,9 +89,11 @@ function toggle_visibility(id) {
     if (elt.style.display == 'inline-block') {
 	var display = 'none';
 	btn.innerHTML = '+ Search +';
+	btn.style.borderRadius = '0 0 10px 10px';
     } else {
 	var display = 'inline-block';
 	btn.innerHTML = '- Search -';
+	btn.style.borderRadius = '0 0 0 0';
     }
     elt.style.display = display;
 }
