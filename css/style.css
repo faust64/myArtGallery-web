@@ -176,6 +176,7 @@ input[type=text] {
 
 #whatdata {
     background: rgb(160,208,112);
+    border-radius: 10px 10px 0 0;
     width: 60%;
 }
 
