@@ -171,6 +171,7 @@
 			body += '(attributed to)<br/>';
 		    }
 		    if (rc.artist.dstart) {
+			body += "<div id='whatdata'>";
 			if (rc.artist.dstart == rc.artist.dstop) {
 			    body += "Active in " + rc.artist.dstart;
 			} else {
@@ -181,14 +182,17 @@
 				rc.artist.dstart.match(/[VXI]/).index == 0) {
 			    body += ' century';
 			}
-			body += "<br/>";
+			body += "</div>";
+		    }
+		    if (rc.artist.bestcountry || rc.artist.priceidx) {
+			body += "<div id='datedata'>";
 		    }
 		    if (rc.artist.bestcountry) {
 			body += 'Mainly sold in ' + rc.artist.bestcountry;
 			if (rc.artist.bestamount) {
 			    body += ' (ratio: ' + rc.artist.bestamount + ')';
 			}
-			body += "<br/>";
+			if (rc.artist.priceidx) { body += "<br/>"; }
 		    }
 		    if (rc.artist.priceidx) {
 			if (rc.artist.priceidx == 'growing' ||
@@ -197,14 +201,17 @@
 			} else {
 			    body += "Mostly sold " + rc.artist.priceidx;
 			}
-			body += "<br/>";
+		    }
+		    if (rc.artist.bestcountry || rc.artist.priceidx) {
+			body += "</div>";
 		    }
 		    if (rc.artist.rank) {
-			body += "Rank: " + rc.artist.rank + "<br/>";
+			body += "<div id='infodata'>Rank: "
+			     + rc.artist.rank + "</div>";
 		    }
 		} %>
 	    <h1><%=sname%></h1>
-	    <p id='whatdata'><%=body%></p>
+	    <p><%=body%></p>
 	    <% } else { %>
 		<h1>Artist not found</h1>
 	    <% } %>
